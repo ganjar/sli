@@ -1,0 +1,42 @@
+@import "../bootstrap/less/bootstrap";
+
+// Border Radius
+.border-radius(@radius) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+}
+
+// Убрать рамку
+.no-border(){
+  border: none;
+  .no-radius();
+}
+
+// Убрать радиус
+.no-radius(){
+  .border-radius(0px);
+}
+
+// Ссылка с подчеркиванием
+.hover-link(){
+  text-decoration: underline;
+  &:hover{
+    text-decoration: none;
+  }
+}
+
+// Убрать текст декоратион
+.no-text-decoration() {
+  text-decoration: none;
+  &:hover{
+    text-decoration: none;
+  }
+}
+
+//Общие стили
+@import "site/common";
+//Стили списка данных на перевод
+@import "site/translate";
+//Стили страницы настроек
+@import "site/settings";
