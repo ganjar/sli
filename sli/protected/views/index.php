@@ -34,7 +34,7 @@
 
 <script type="text/javascript">
     $(function(){
-        translate.itemsBlock.on('change', 'textarea', function(){
+        SLItranslateApi.itemsBlock.on('change', 'textarea', function(){
             var currId = $(this).attr('name');
             if (currId) {
                 site.setVisualLoad(true);
@@ -45,7 +45,7 @@
         });
 
         $('#selectedDelete').click(function(){
-            var items = translate.itemsBlock.find('td.button-column input.selectItem:checked'),
+            var items = SLItranslateApi.itemsBlock.find('td.button-column input.selectItem:checked'),
                 countItems = items.length;
 
             if (countItems && confirm('Удалить выбранные элементы? ('+countItems+'шт.)')) {

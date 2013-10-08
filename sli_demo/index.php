@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 
     <title>Пример работы SLI</title>
@@ -10,24 +10,24 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(function(){
-           $('[data-toggle=tooltip]').tooltip({placement: 'bottom'});
+            $('[data-toggle=tooltip]').tooltip({placement: 'bottom'});
         });
     </script>
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-  <body style="padding-top: 80px;">
+<body style="padding-top: 80px;">
 
-    <div class="navbar navbar-fixed-top navbar-default" role="navigation">
-      <div class="container">
+<div class="navbar navbar-fixed-top navbar-default" role="navigation">
+    <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Название проекта</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Название проекта</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -42,7 +42,7 @@
                 <?php foreach(SLIApi::getLanguagesChangeList() as $val) {?>
                     <li<?php echo $val['selected'] ? ' class="selected"': '';?>>
                         <a % href="<?php echo $val['href'];?>" data-toggle="tooltip" title="<?php echo $val['title']?>">
-                            <img src="/sli/static/img/flags/<?php echo $val['alias']?>.png" alt="<?php echo $val['title']?>">
+                        <img src="/sli/static/img/flags/<?php echo $val['alias']?>.png" alt="<?php echo $val['title']?>">
                         </a>
                     </li>
                 <?php }?>
@@ -51,12 +51,12 @@
             <!-- SLI: end -->
 
         </div><!-- /.nav-collapse -->
-      </div><!-- /.container -->
-    </div><!-- /.navbar -->
+    </div><!-- /.container -->
+</div><!-- /.navbar -->
 
-    <div class="container">
+<div class="container">
 
-      <div class="row row-offcanvas row-offcanvas-right">
+    <div class="row row-offcanvas row-offcanvas-right">
         <div class="col-xs-12 col-sm-9">
             <div>
 
@@ -130,30 +130,30 @@
         </div><!--/span-->
 
         <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
-          <div class="well sidebar-nav">
-            <ul class="nav">
-              <li>Комментарии</li>
-              <li class="active"><a href="#">У нас 10 отзывов</a></li>
-              <li><a href="#">У нас 20 отзывов</a></li>
-              <li><a href="#">У нас 13 отзывов</a></li>
-              <li>Навигация</li>
-              <li><a href="#">Главное</a></li>
-              <li><a href="#">Информация</a></li>
-              <li><a href="#">Контакты</a></li>
-              <li>Дополнительно</li>
-              <li><a href="#">Уксус</a></li>
-              <li><a href="#">Вода</a></li>
-            </ul>
-          </div><!--/.well -->
+            <div class="well sidebar-nav">
+                <ul class="nav">
+                    <li>Комментарии</li>
+                    <li class="active"><a href="#">У нас 10 отзывов</a></li>
+                    <li><a href="#">У нас 20 отзывов</a></li>
+                    <li><a href="#">У нас 13 отзывов</a></li>
+                    <li>Навигация</li>
+                    <li><a href="#">Главное</a></li>
+                    <li><a href="#">Информация</a></li>
+                    <li><a href="#">Контакты</a></li>
+                    <li>Дополнительно</li>
+                    <li><a href="#">Уксус</a></li>
+                    <li><a href="#">Вода</a></li>
+                </ul>
+            </div><!--/.well -->
         </div><!--/span-->
-      </div><!--/row-->
+    </div><!--/row-->
 
-      <hr>
+    <hr>
 
-      <footer>
+    <footer>
         <p>© Компания 2013</p>
-      </footer>
+    </footer>
 
-    </div><!--/.container-->
+</div><!--/.container-->
 
 </body></html>

@@ -1,4 +1,4 @@
-var translate = {
+var SLItranslateApi = {
     filter: null
     , extFilter: null
     , itemsBlock: null
@@ -24,7 +24,7 @@ var translate = {
 
             site.setVisualLoad(true);
 
-            translate.translate(originalText, originalLanguage, translateAlias, function(response){
+            SLItranslateApi.translate(originalText, originalLanguage, translateAlias, function(response){
                 textArea.val(response).change();
                 site.setVisualLoad();
             });
@@ -42,7 +42,7 @@ var translate = {
     }
 
     , initFilterAffix: function() {
-        translate.filter.affix({
+        SLItranslateApi.filter.affix({
             offset: {
                 top: $('#filter-cap').offset().top
             }
@@ -52,20 +52,20 @@ var translate = {
 
 $(function(){
 
-    translate.itemsBlock = $('#items');
+    SLItranslateApi.itemsBlock = $('#items');
 
-    translate.filter = $('#filters');
+    SLItranslateApi.filter = $('#filters');
 
-    if (!translate.filter.length) {
+    if (!SLItranslateApi.filter.length) {
         return false;
     }
 
-    translate.extFilter = translate.filter.find('tbody');
+    SLItranslateApi.extFilter = SLItranslateApi.filter.find('tbody');
 
-    translate.initFilterAffix();
+    SLItranslateApi.initFilterAffix();
 
     $('#showFilter').click(function() {
-        translate.extFilter.toggle();
+        SLItranslateApi.extFilter.toggle();
         return false;
     });
 

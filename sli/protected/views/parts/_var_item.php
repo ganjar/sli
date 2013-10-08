@@ -13,7 +13,7 @@
 		<div class="lang-container lang-<?php echo $langValue['alias'];?>" style="<?php echo $langValue['alias']!=$language['alias'] ? 'display:none;' : '';?>">
 			<textarea class="form-control" name="<?php echo $id;?>" lang="<?php echo $langValue['alias'];?>"><?php echo !empty($translate[$langValue['alias']][$id]) ? $translate[$langValue['alias']][$id] : '';?></textarea>
 			<?php if (SLISettings::getInstance()->getVar('originalLanguage')) {?>
-                <a href="#" type="button" onclick="translate.autoTranslate(this);return false;" class="auto-translate" data-toggle="tooltip" title="Машинный перевод">
+                <a href="#" type="button" onclick="SLItranslateApi.autoTranslate(this);return false;" class="auto-translate" data-toggle="tooltip" title="Машинный перевод">
                     <span class="glyphicon glyphicon-cloud"></span>
                 </a>
 			<?php }?>

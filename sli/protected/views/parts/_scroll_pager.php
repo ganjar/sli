@@ -27,7 +27,7 @@
 
         function scrollPagination() {
 
-            var lastItemTop = translate.itemsBlock.height();
+            var lastItemTop = SLItranslateApi.itemsBlock.height();
 
             //подгружаем след. страницу
             if (!sendRequestNextPage && params['page']<=allPages && lastItemTop && jQuery(window).scrollTop() > (lastItemTop-1000)) {
@@ -37,7 +37,7 @@
                     if (data != null) {
                         params['page']++;
 
-                        var newPage = jQuery(data.result).appendTo(translate.itemsBlock);
+                        var newPage = jQuery(data.result).appendTo(SLItranslateApi.itemsBlock);
 
                         newPage.find('textarea').autoResize({
                             animate: false,
@@ -66,12 +66,12 @@
             }
         });
 
-        translate.itemsBlock.on('click', '.icon-delete', function(){
+        SLItranslateApi.itemsBlock.on('click', '.icon-delete', function(){
             $(this).parent().find('.selectItem').click();
             $('#selectedDelete').click();
         });
 
-        translate.itemsBlock.on('change', '.selectItem', function(){
+        SLItranslateApi.itemsBlock.on('change', '.selectItem', function(){
             var contentBlock = $(this).parents('tr');
             if ($(this).is(':checked')) {
                 contentBlock.addClass('delete');

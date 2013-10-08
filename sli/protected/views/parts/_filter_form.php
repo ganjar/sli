@@ -22,7 +22,7 @@
                 <td class="translate">
                     <div class="s-translate-container">
                         <?php if (SLISettings::getInstance()->getVar('originalLanguage')) {?>
-                            <a href="#" type="button" onclick="if (confirm('Перевести все пустые элементы?')) { translate.translateAll();} return false;" class="translate-all pull-right" data-toggle="tooltip" data-placement="bottom"
+                            <a href="#" type="button" onclick="if (confirm('Перевести все пустые элементы?')) { SLItranslateApi.translateAll();} return false;" class="translate-all pull-right" data-toggle="tooltip" data-placement="bottom"
                                title="Заполнить все пустые элементы на странице машинным переводом">
                                 <span class="glyphicon glyphicon-cloud"></span>
                             </a>
