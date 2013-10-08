@@ -7,7 +7,7 @@
 class SLIVersion {
 
     const SITE_URL = 'sli.su';
-    const CURRENT_VERSION = '1.0';
+    const CURRENT_VERSION = '1.01';
 
     public static function getDownloadLink()
     {
