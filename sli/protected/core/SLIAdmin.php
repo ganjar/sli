@@ -304,7 +304,7 @@ class SLIAdmin {
                 }
             }
 
-            empty($language) ? @array_shift($settings->getVar(SLISettings::LANGUAGES_VAR)) : '';
+            empty($language) ? $language = @array_shift($settings->getVar(SLISettings::LANGUAGES_VAR)) : '';
 
             //применяем фильтр
             $query = self::getFilterQuery($search);
@@ -477,19 +477,19 @@ class SLIAdmin {
 
             //определяем активный язык    
             if (!empty($search['language'])) {
-                foreach ($languages as $key=>$value) {
+                foreach ($languages as $value) {
                     if ($search['language']==$value['alias']) {
                         $language = $value;
                         break;
                     }
                 }
             }
-                                
-            empty($language) ? @array_shift($settings->getVar(SLISettings::LANGUAGES_VAR)) : '';
+
+            empty($language) ? $language = @array_shift($settings->getVar(SLISettings::LANGUAGES_VAR)) : '';
 
             //подготавливаем список перевода
             $translate = array();
-            foreach($languages as $langKey=>$langValue) { $translate[$langValue['alias']] = SLIVars::getLanguageContent($langValue['alias']);}
+            foreach($languages as $langValue) { $translate[$langValue['alias']] = SLIVars::getLanguageContent($langValue['alias']);}
             $original = SLIVars::getOriginalContent();
             
             //применяем фильтр
@@ -822,7 +822,7 @@ class SLIAdmin {
     private static function getFilterVars()
     {
     	return	array (
-	        'id'            => !empty($_REQUEST['search']['id']) || $_REQUEST['search']['id']==='0' ? (int)$_REQUEST['search']['id'] : null,
+	        'id'            => isset($_REQUEST['search']['id']) ? (int)$_REQUEST['search']['id'] : null,
 	        'original'      => !empty($_REQUEST['search']['original']) ? stripcslashes($_REQUEST['search']['original']) : '',
 	        'url'           => !empty($_REQUEST['search']['url']) ? stripcslashes($_REQUEST['search']['url']) : '',
 	        'sort'          => !empty($_REQUEST['search']['sort']) ? stripcslashes($_REQUEST['search']['sort']) : 'id-desc',
