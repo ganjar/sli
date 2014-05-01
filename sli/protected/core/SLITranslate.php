@@ -155,14 +155,22 @@ class SLITranslate {
      */    
     public static function getLocalizedLinks($content)
     {
+        //Заменяем ссылки на картинки и файлы что бы не локализировать
+        $content = preg_replace('#<a([^>]*)href=("|\')([^>]+\.(?:jpg|png|gif|pdf|jpeg|zip|rar|tar|ico|mp3))#Usi', '<a$1href_sli_file=$2$3', $content);
+
+        //Локализируем
         $allow = self::getAllowPregString();
         $host = preg_quote($_SERVER['HTTP_HOST']);
         $content = preg_replace('#<(a|base)(?! %)([^>]*)href=("|\')((/)(?!'.self::$language.'/)|(http://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '[^>]*').')(?!\\\)\\3(.*)>#Usi', '<$1$2href=$3$6/'.self::$language.'$5$7$3$8>', $content);
         $content = preg_replace('#<form([^>]*)action=("|\')((/)(?!'.self::$language.'/)|(http://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '[^>]*').')(?!\\\)\\2(.*)>#Usi', '<form$1action=$2$5/'.self::$language.'$4$6$2$7>', $content);
         $content = preg_replace('#(?:document\.)?location\.href\s*=\s*("|\')((/)(?!'.self::$language.'/)|(http://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '.*').')(?!\\\)\\1#Ui', 'location.href=$1$4/'.self::$language.'$3$5$1', $content);
         $content = str_replace('<a %', '<a ', $content);
-        
-        return $content;    
+
+
+        $content = str_replace('href_sli_file=', 'href=', $content);
+        $content = preg_replace('#href=("|\')([^>]+/'.self::$language.')\\1#Usi', 'href=$1$2/$1', $content);
+
+        return $content;
     }
     
     /**
