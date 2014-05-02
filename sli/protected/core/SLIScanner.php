@@ -95,7 +95,7 @@ class SLIScanner {
 
                     if ($content) {
 
-                        ob_end_flush();
+                        @ob_end_flush();
 
                         preg_match_all('#href\s*=\s*(?:"|\')((?:http://'.preg_quote($_SERVER['HTTP_HOST']).')|/.+)(?:"|\')#Ui', $content, $match);
                         $urls = array_merge($urls, $match[1]);

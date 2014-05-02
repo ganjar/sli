@@ -822,7 +822,7 @@ class SLIAdmin {
     private static function getFilterVars()
     {
     	return	array (
-	        'id'            => isset($_REQUEST['search']['id']) ? (int)$_REQUEST['search']['id'] : null,
+	        'id'            => isset($_REQUEST['search']['id']) && $_REQUEST['search']['id'] ? (int)$_REQUEST['search']['id'] : null,
 	        'original'      => !empty($_REQUEST['search']['original']) ? stripcslashes($_REQUEST['search']['original']) : '',
 	        'url'           => !empty($_REQUEST['search']['url']) ? stripcslashes($_REQUEST['search']['url']) : '',
 	        'sort'          => !empty($_REQUEST['search']['sort']) ? stripcslashes($_REQUEST['search']['sort']) : 'id-desc',
