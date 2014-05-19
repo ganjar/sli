@@ -691,7 +691,9 @@ class SLIAdmin {
             //показываем только непереведенные айтемы
             if ($search['show_empty']) {
                 $languageId = !empty($search['language']) ? SLITranslate::getLangId($search['language']) : 0;
-                $query['where'][] = '(((t.content="" OR t.content IS NULL) AND t.language_id="'.$languageId.'") OR (t.content<>"" AND t.content IS NOT NULL AND t.language_id<>"'.$languageId.'"))';
+                $query['where'][] = '(((t.content="" OR t.content IS NULL) AND t.language_id="'.$languageId.'") OR o.id NOT IN (
+                    SELECT `sli_original`.`id` FROM `sli_original` , `sli_translate` WHERE `sli_original`.`id` = `sli_translate`.`original_id`  AND `sli_translate`.`language_id`="'.$languageId.'"
+                ))';
             }
 
             //сортировка
