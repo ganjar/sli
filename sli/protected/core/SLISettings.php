@@ -67,7 +67,7 @@ class SLISettings {
     public function setVar($name, $value)
     {
         if (is_string($value)) {
-            $value = htmlspecialchars(stripcslashes($value), ENT_QUOTES, 'utf-8');            
+            $value = htmlspecialchars($value, ENT_QUOTES, 'utf-8');
         }
         
         if ((!self::$_mustSave && isset(self::$_settings[$name]) && self::$_settings[$name]!=$value) || !isset(self::$_settings[$name])) {
