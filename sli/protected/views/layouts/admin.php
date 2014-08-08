@@ -21,7 +21,9 @@
     <?php } else {?>
     <link rel="stylesheet" href="static/css/router.css"/>
     <?php }?>
-
+    <script type="text/javascript">
+        var SLItranslateApiKey = '<?php echo SLISettings::getInstance()->getVar('translateKey');?>';
+    </script>
     <script src="static/js/jquery.min.js"></script>
     <script src="static/bootstrap/js/bootstrap.min.js"></script>
     <script src="static/js/jquery.cookie.js"></script>

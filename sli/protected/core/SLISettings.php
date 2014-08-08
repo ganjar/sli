@@ -67,7 +67,10 @@ class SLISettings {
     public function setVar($name, $value)
     {
         if (is_string($value)) {
-            $value = htmlspecialchars($value, ENT_QUOTES, 'utf-8');
+            if ($name=='translateKey') {
+                $value = preg_replace('#[^a-z0-9\.\-_]#i', '', $value);
+            }
+            $value = htmlspecialchars(stripcslashes($value), ENT_QUOTES, 'utf-8');
         }
         
         if ((!self::$_mustSave && isset(self::$_settings[$name]) && self::$_settings[$name]!=$value) || !isset(self::$_settings[$name])) {
@@ -89,6 +92,10 @@ class SLISettings {
             'originalLanguage' => array(
                 'title' => 'Язык оригинала',
                 'help'  => '',
+            ),
+            'translateKey' => array(
+                'title' => 'API Ключ',
+                'help'  => 'для работы авто перевода нужно получить Yandex ключ',
             ),
             'ignoreTags'        => array(
                 'title' => 'Игнорировать теги', 

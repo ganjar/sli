@@ -1,15 +1,24 @@
 var SLItranslateApi = {
     filter: null
+    , apiKey: SLItranslateApiKey || ''
     , extFilter: null
     , itemsBlock: null
 
     ,translate: function (text, sl, tl, success){
-        $.ajax({ url: 'http://translate.yandex.ru/tr.json/translate?srv=tr-text&id=812c6278-0-0&reason=auto',
-            dataType: 'jsonp',
-            data: { text: text, lang: sl+'-'+tl },
-            success: function(result) { success(result); },
-            error: function(XMLHttpRequest, errorMsg, errorThrown) { alert(errorMsg); }
-        });
+        if (!SLItranslateApi.apiKey) {
+            alert('Для работы автоматического перевода - введите Yandex Translate API Key в настройках системы.');
+        } else {
+            $.ajax({ url: 'https://translate.yandex.net/api/v1.5/tr/translate',
+                dataType: 'xml',
+                data: { text: text, lang: sl+'-'+tl, key: SLItranslateApi.apiKey},
+                success: function(xml) {
+                    $(xml).find('text').each(function(){
+                        success($(this).text());
+                    });
+                },
+                error: function(XMLHttpRequest, errorMsg, errorThrown) { alert(errorMsg); }
+            });
+        }
     }
 
     ,autoTranslate: function (elem) {
