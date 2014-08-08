@@ -1,10 +1,10 @@
 sli
 ===
 
-SLI - Site Language Injection
-Make a website multilingualfor 5 minutes
-Мультиязычный сайт на php за 5 минут
-
+SLI - Site Language Injection  <br>
+Make a website multilingualfor 5 minutes  <br>
+Мультиязычный сайт на php за 5 минут  <br>
+  <br>
 Текущая версия: 1.0 (Проверить обновления - http://sli.su/download/)<br>
 Лицензия: Donationware <br>
 Автор: Богдан Рыхаль (GANJAR) <br>
