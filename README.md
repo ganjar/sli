@@ -5,7 +5,7 @@ SLI - Site Language Injection  <br>
 Make a website multilingualfor 5 minutes  <br>
 Мультиязычный сайт на php за 5 минут  <br>
   <br>
-Текущая версия: 1.0 (Проверить обновления - http://sli.su/download/)<br>
+Текущая версия: 1.1 (Проверить обновления - http://sli.su/download/)<br>
 Лицензия: Donationware <br>
 Автор: Богдан Рыхаль (GANJAR) <br>
 Сайт: http://sli.su/<br>
