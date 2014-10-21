@@ -379,8 +379,8 @@ class SLITranslate {
 	                    if (self::$_tData[$search]['original']!=$clean) {
 
                             //Заменяем измененные не переводимые части в значении перевода
-                            preg_match_all('#(?:(?:&\#?[A-z0-9]{1,7};)|[\d,.|!?/\#*+=^~`_&^%$@:©×()\[\]{}"\'\\\;])+#u', $clean, $symbols);
-                            preg_match_all('#(?:(?:&\#?[A-z0-9]{1,7};)|[\d,.|!?/\#*+=^~`_&^%$@:©×()\[\]{}"\'\\\;])+#u', $isHaveTranslate, $tSymbols);
+                            preg_match_all('#(?:(?:&\#?[A-z0-9]{1,7};)|[\d,.|!?/\#*+=^~_&^%$@:©×()\[\]{}"\\\;])+#u', $clean, $symbols);
+                            preg_match_all('#(?:(?:&\#?[A-z0-9]{1,7};)|[\d,.|!?/\#*+=^~_&^%$@:©×()\[\]{}"\\\;])+#u', $isHaveTranslate, $tSymbols);
 
 	                        if (!empty($symbols[0])) { $symbols = $symbols[0];}
 	                        if (!empty($tSymbols[0])) { $tSymbols = $tSymbols[0];}
@@ -389,8 +389,9 @@ class SLITranslate {
 
 	                            $sPos = 0;
 	                            foreach ($symbols as $symbolKey=>$symbol) {
-	                                
-	                                if (empty($tSymbols[$symbolKey])) { continue;}
+
+                                    //Апостроф не заменяем
+                                    if (empty($tSymbols[$symbolKey]) || $tSymbols[$symbolKey]=='&#039;') { continue;}
 	                                $sPos = strpos($isHaveTranslate, $tSymbols[$symbolKey], $sPos);
 	                                                            
 	                                if ($sPos!==false) {
@@ -559,7 +560,7 @@ class SLITranslate {
     	return '#
           (?:(?:>|\A)|(?:\s+(?:'.implode('|', $regexp).')\s*=\s*("|\')))
                 (?:(?:&\#?[a-z0-9]{1,7};)|[\s\d,.|!?/\#*+=^~`\-_&^%$@:©×()\[\]{}"\'\\\;])*
-            		([a-zа-яёїі][^<]+[,.!?:;)}\]]?)(?![,.!?:;)}\]])
+            		([a-zа-яёїі][^<]*[,.!?:;)}\]]?)(?![,.!?:;)}\]])
                 (?:(?:&\#?[a-z0-9]{1,7};)|[\s\d,.|!?/\#*+=^~`\-_&^%$@:©×()\[\]{}"\'\\\;])*
   		  (?:(?:(?!\\\)\\1)|(?:<|\Z))
         #Uuxsi';
