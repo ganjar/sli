@@ -21,7 +21,7 @@ class SLIApi {
     {
         if (is_null(self::$__languagesChangeList)) {
             
-            $requestUri = !empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+            $requestUri = !empty($_SERVER['REQUEST_URI']) ? htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES) : '/';
 
             //Языки в админке
             $langList = SLISettings::getInstance()->getVar(SLISettings::LANGUAGES_VAR);
