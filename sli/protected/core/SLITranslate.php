@@ -391,7 +391,7 @@ class SLITranslate {
 	                            foreach ($symbols as $symbolKey=>$symbol) {
 
                                     //Апостроф не заменяем
-                                    if (empty($tSymbols[$symbolKey]) || $tSymbols[$symbolKey]=='&#039;') { continue;}
+                                    if (!isset($tSymbols[$symbolKey]) || $tSymbols[$symbolKey]=='&#039;') { continue;}
 	                                $sPos = strpos($isHaveTranslate, $tSymbols[$symbolKey], $sPos);
 	                                                            
 	                                if ($sPos!==false) {
