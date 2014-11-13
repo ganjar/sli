@@ -382,8 +382,8 @@ class SLITranslate {
                             preg_match_all('#(?:(?:&\#?[A-z0-9]{1,7};)|[\d,.|!?/\#*+=^~_&^%$@:©×()\[\]{}"\\\;])+#u', $clean, $symbols);
                             preg_match_all('#(?:(?:&\#?[A-z0-9]{1,7};)|[\d,.|!?/\#*+=^~_&^%$@:©×()\[\]{}"\\\;])+#u', $isHaveTranslate, $tSymbols);
 
-	                        if (!empty($symbols[0])) { $symbols = $symbols[0];}
-	                        if (!empty($tSymbols[0])) { $tSymbols = $tSymbols[0];}
+                            $symbols = $symbols[0];
+                            $tSymbols = $tSymbols[0];
 	                    
 	                        if (!empty($symbols)) {
 
