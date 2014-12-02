@@ -105,4 +105,13 @@ class SLIApi {
     {
         return SLITranslate::t($content, $language);
     }
+
+    /**
+     * Проверить юзер агент на сканер SLI
+     * @return bool
+     */
+    public static function isScannerBot()
+    {
+        return isset($_SERVER['HTTP_USER_AGENT']) && $_SERVER['HTTP_USER_AGENT']=='SLI';
+    }
 }

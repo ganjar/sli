@@ -177,12 +177,19 @@ class SLIScanner {
      */
     public static function getContent($url)
     {
-        if (is_string($url) && $url[0]=='/') {
+        $opts = array(
+            'http' => array(
+                'method' => "GET",
+                'header' => "User-Agent: SLI\r\n"
+            )
+        );
+        $context = stream_context_create($opts);
 
-            
+        if (strpos($url, 'http://')===0) {
+            return @file_get_contents($url, false, $context);
+        } elseif (is_string($url) && $url[0]=='/') {
             $url = 'http://'.$_SERVER['HTTP_HOST'].$url;
-
-            return @file_get_contents($url);
+            return @file_get_contents($url, false, $context);
         }
     }
 

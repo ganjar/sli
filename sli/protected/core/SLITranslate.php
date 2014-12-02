@@ -134,8 +134,10 @@ class SLITranslate {
             }
         }
 
-        //Очистить контент от переменных переводчика
-        $content = self::cleanSliVars($content);
+        //Очистить контент от переменных переводчика (если не сканер SLI)
+        if (!SLIApi::isScannerBot()) {
+            $content = self::cleanSliVars($content);
+        }
 
     	return $content;
     }
@@ -396,6 +398,7 @@ class SLITranslate {
 	                                                            
 	                                if ($sPos!==false) {
 	                                    $isHaveTranslate = substr_replace($isHaveTranslate, $symbol, $sPos, strlen($tSymbols[$symbolKey]));
+                                        $sPos += strlen($symbol);
 	                                }    
 	                            }
 	                        }
