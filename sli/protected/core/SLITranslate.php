@@ -644,8 +644,7 @@ class SLITranslate {
                         FROM `sli_original` AS `o`
                         FORCE INDEX(indexA)
                         ".($langId!==false ? "LEFT JOIN `sli_translate` AS `t` ON(`o`.`id`=`t`.`original_id` AND `t`.`language_id`=$langId)" : '')."
-                    WHERE ".(implode('OR', array_fill(0, $cRequest, '(`a`=? AND `search`=?)')))."
-                    GROUP BY o.`search`
+                    WHERE ".(implode('OR', array_fill(0, $cRequest, '(`a`=? AND BINARY `search`=?)')))."
                     LIMIT $cRequest
                 ");
 
