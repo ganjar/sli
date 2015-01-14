@@ -621,7 +621,7 @@ class SLITranslate {
 
         //Удаляем те что уже достали с БД
         foreach ($searchKeys as $k=>$v) {
-            if (isset(self::$_tData[$k])) { unset($searchKeys[$k]);}
+            if (isset(self::$_tData[$v])) { unset($searchKeys[$k]);}
         }
 
         if ($searchKeys) {
@@ -644,7 +644,9 @@ class SLITranslate {
                         FROM `sli_original` AS `o`
                         FORCE INDEX(indexA)
                         ".($langId!==false ? "LEFT JOIN `sli_translate` AS `t` ON(`o`.`id`=`t`.`original_id` AND `t`.`language_id`=$langId)" : '')."
-                    WHERE ".(implode('OR', array_fill(0, $cRequest, '(`a`=? AND `search`=?)')))." LIMIT $cRequest
+                    WHERE ".(implode('OR', array_fill(0, $cRequest, '(`a`=? AND `search`=?)')))."
+                    GROUP BY o.`search`
+                    LIMIT $cRequest
                 ");
 
                 $paramKey = 0;
