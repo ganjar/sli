@@ -163,9 +163,9 @@ class SLITranslate {
         //Локализируем
         $allow = self::getAllowPregString();
         $host = preg_quote($_SERVER['HTTP_HOST']);
-        $content = preg_replace('#<(a|base)(?! %)([^>]*)href=("|\')((/)(?!'.self::$language.'/)|(http://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '[^>]*').')(?!\\\)\\3(.*)>#Usi', '<$1$2href=$3$6/'.self::$language.'$5$7$3$8>', $content);
-        $content = preg_replace('#<form([^>]*)action=("|\')((/)(?!'.self::$language.'/)|(http://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '[^>]*').')(?!\\\)\\2(.*)>#Usi', '<form$1action=$2$5/'.self::$language.'$4$6$2$7>', $content);
-        $content = preg_replace('#(?:document\.)?location\.href\s*=\s*("|\')((/)(?!'.self::$language.'/)|(http://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '.*').')(?!\\\)\\1#Ui', 'location.href=$1$4/'.self::$language.'$3$5$1', $content);
+        $content = preg_replace('#<(a|base)(?! %)([^>]*)href=("|\')((/)(?!'.self::$language.'/)|(https?://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '[^>]*').')(?!\\\)\\3(.*)>#Usi', '<$1$2href=$3$6/'.self::$language.'$5$7$3$8>', $content);
+        $content = preg_replace('#<form([^>]*)action=("|\')((/)(?!'.self::$language.'/)|(https?://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '[^>]*').')(?!\\\)\\2(.*)>#Usi', '<form$1action=$2$5/'.self::$language.'$4$6$2$7>', $content);
+        $content = preg_replace('#(?:document\.)?location\.href\s*=\s*("|\')((/)(?!'.self::$language.'/)|(https?://'.$host.')(?!/'.self::$language.'/))('.($allow ? $allow : '.*').')(?!\\\)\\1#Ui', 'location.href=$1$4/'.self::$language.'$3$5$1', $content);
         $content = str_replace('<a %', '<a ', $content);
 
 
@@ -176,15 +176,15 @@ class SLITranslate {
     }
     
     /**
-     * Получить локализованный адрес (только полные адреса начинающиеся на / или http://)
+     * Получить локализованный адрес (только полные адреса начинающиеся на / или https?://)
      * @var string
      * @return string     
      */    
     public static function getLocalizedUrl($url)
     {        
-    	if (self::getCurrentLanguage() && is_string($url) && ($url[0]=='/' || strpos($url, 'http://')!==false)) {
+    	if (self::getCurrentLanguage() && is_string($url) && ($url[0]=='/' || strpos($url, 'http://')!==false || strpos($url, 'https://')!==false)) {
             $allow = self::getAllowPregString();
-            $url = preg_replace('#^((?:(/)(?!'.self::$language.'/))|(?:(http://'.preg_quote($_SERVER['HTTP_HOST']).')(?!/'.self::$language.'/)))('.($allow ? $allow : '.*').')$#Ui', '$3/'.self::$language.'$2$4', $url);
+            $url = preg_replace('#^((?:(/)(?!'.self::$language.'/))|(?:(https?://'.preg_quote($_SERVER['HTTP_HOST']).')(?!/'.self::$language.'/)))('.($allow ? $allow : '.*').')$#Ui', '$3/'.self::$language.'$2$4', $url);
         }
         
         return $url;    
