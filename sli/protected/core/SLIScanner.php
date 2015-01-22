@@ -97,7 +97,7 @@ class SLIScanner {
 
                         @ob_end_flush();
 
-                        preg_match_all('#href\s*=\s*(?:"|\')((?:http://'.preg_quote($_SERVER['HTTP_HOST']).')|/.+)(?:"|\')#Ui', $content, $match);
+                        preg_match_all('#href\s*=\s*(?:"|\')((?:https?://'.preg_quote($_SERVER['HTTP_HOST']).')|/.+)(?:"|\')#Ui', $content, $match);
                         $urls = array_merge($urls, $match[1]);
                         unset($match);
                     }
@@ -121,7 +121,7 @@ class SLIScanner {
 
         foreach ($siteMap as $parseUrl) {
 
-            $parseUrl = preg_replace('#http://.*/#Ui', '/', $parseUrl);
+            $parseUrl = preg_replace('#https?://.*/#Ui', '/', $parseUrl);
 
             //Продолжить с последнего
             if ($lastUrl && !$startLast && $parseUrl!=$lastUrl) {
@@ -185,7 +185,7 @@ class SLIScanner {
         );
         $context = stream_context_create($opts);
 
-        if (strpos($url, 'http://')===0) {
+        if (strpos($url, 'http://')===0 || strpos($url, 'https://')===0) {
             return @file_get_contents($url, false, $context);
         } elseif (is_string($url) && $url[0]=='/') {
             $url = 'http://'.$_SERVER['HTTP_HOST'].$url;
