@@ -754,7 +754,7 @@ class SLITranslate {
 
         return true;
     }
-    
+
 	/**
 	 * Получить выбранный язык
 	 * @return string
@@ -762,15 +762,15 @@ class SLITranslate {
 	public static function getCurrentLanguage()
 	{
         if (is_null(self::$language)) {
-            
+
             //для авторизированных доступны все языки
             $onlyActive = SLIAdmin::getUser() ? false : true;
-            
+
             //парсим урл
-            preg_match('!^/('.implode('|', self::getLanguages($onlyActive)).')/?!', $_SERVER['REQUEST_URI'], $match);
-            self::$language = !empty($match[1]) ? $match[1] : false;   
+            preg_match('!^/('.implode('|', self::getLanguages($onlyActive)).')(/|\?|\Z)!', $_SERVER['REQUEST_URI'], $match);
+            self::$language = !empty($match[1]) ? $match[1] : false;
         }
-		
+
 		return self::$language;
 	}
 

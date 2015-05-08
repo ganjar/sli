@@ -85,7 +85,7 @@
                 <div class="form-group row">
                     <label class="col-md-4 control-label">
                         <?php echo SLISettings::getAttribute('translateKey')->title;?>
-                        (<a href="http://api.yandex.ru/key/form.xml?service=trnsl" target="_blank">Получить ключ</a>)
+                        (<a href="https://tech.yandex.ru/keys/get/?service=trnsl" target="_blank">Получить ключ</a>)
                     </label>
                     <div class="col-md-8">
                         <input type="text" name="settings[translateKey]" value="<?php echo $settings->getVar('translateKey');?>" class="form-control"/>
