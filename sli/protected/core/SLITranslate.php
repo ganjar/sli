@@ -134,9 +134,20 @@ class SLITranslate {
             }
         }
 
-        //Очистить контент от переменных переводчика (если не сканер SLI)
+        //если не сканер SLI
         if (!SLIApi::isScannerBot()) {
+            //Очистить контент от переменных переводчика
             $content = self::cleanSliVars($content);
+
+            //Вставить в указанном месте блок со сменой языковой версии
+            if (strpos($content, '<!--SLIApi::getLanguagesChangeList-->')!==false) {
+                $sliSelLang = '<ul class="language">';
+                foreach(SLIApi::getLanguagesChangeList() as $val) {
+                    $sliSelLang .= '<li'.($val['selected'] ? ' class="selected"': '').'><a % href="'.$val['href'].'"><img src="/sli/static/img/flags/'.$val['alias'].'.png" alt="'.$val['title'].'" title="'.$val['title'].'"></a></li>';
+                }
+                $sliSelLang .= '</ul>';
+                $content = str_replace ('<!--SLIApi::getLanguagesChangeList-->', $sliSelLang, $content);
+            }
         }
 
     	return $content;
