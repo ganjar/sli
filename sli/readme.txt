@@ -44,7 +44,9 @@ RewriteRule ^(.*)$ index.php [L]
 Контент
 <?php SLIApi::ignoreEnd();?>
 
-Вывод языков на сайте
+Быстрый вывод языков на сайте: добавьте в html код
+<!--SLIApi::getLanguagesChangeList-->
+Либо через php api:
 SLIApi::getLanguagesChangeList() - массив с языками
 Использование:
 <ul class="language">
