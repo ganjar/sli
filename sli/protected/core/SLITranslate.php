@@ -839,9 +839,12 @@ class SLITranslate {
         return !empty($languages[$languageId]) ? $languages[$languageId] : false;
     }
 
-	/**
-	 * Сохранить значение перевода
-	 */
+    /**
+     * Сохранить значение перевода
+     * @param $id
+     * @param $language
+     * @param $content
+     */
 	public static function saveTranslate($id, $language, $content)
 	{
 		if (($languageId = self::getLangId($language))!==false) {

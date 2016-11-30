@@ -23,33 +23,7 @@ class SLIVars {
 	 * Массив оригиналов
 	 * @var array
 	 */    
-    public static $_originalData;	
-    
-    /**
-     * Получить массив с данными для перевода
-     * @var $lang - string
-     * @return array
-     */                   
-    private static function getTranslateData($language)
-    {                   
-        if (is_null(self::$_tData)) {
-            
-            self::$_tData = array();
-                                                                            
-            //подключаем выбранную языковую версию
-            $translate = self::getLanguageContent($language);
-            
-            if (!empty(self::$_originalData) && is_array(self::$_originalData) && !empty($translate) && is_array($translate)) {
-                foreach ($translate as $key=>$value) {
-                    if (empty(self::$_originalData[$key])) { continue;} 
-                    self::$_tData[self::$_originalData[$key]] = $value;
-                }
-            }
-            
-        }         
-        
-        return self::$_tData;    
-    }
+    public static $_originalData;
     
     /**
      * Получить контент языковой версии
@@ -84,7 +58,7 @@ class SLIVars {
     /**
      * Добавить значение в массив оригиналов на перевод
      * @var $lang - string
-     * @return false or integer (insert id)
+     * @return bool|integer (insert id)
      */    
     private static function addOriginalText($text)
     {
@@ -118,17 +92,19 @@ class SLIVars {
 	 * Сохранить значение перевода
 	 * @param integer $id
 	 * @param mixed $language (если false - будет сохранен оригинал, иначе - перевод)
-	 * @param unknown_type $text
-	 * @return unknown
+	 * @param string $text
+	 * @return bool
 	 */
 	public static function saveTranslate($id, $language, $text)
 	{
+        $result = false;
+
 		if ($language===false || in_array($language, SLITranslate::getLanguages())) {
+
             $id = (int)$id;
 			$originalData = self::getOriginalContent();
 			$countOriginalData = count($originalData);
-			$translateData = array();
-            
+
 			//Сохраняем оригинал
 			if ($language===false) {
 				$tFile = SLI_VARS_ORIGINAL_FILE;
@@ -157,7 +133,7 @@ class SLIVars {
 	
 	/**
 	 * Сохранить переменную
-	 * @param unknown_type $var
+	 * @param string $var
 	 * @return boolean
 	 */
 	public static function saveVar($var)
