@@ -91,26 +91,26 @@ class SLITranslate {
      * Частичный перевод текста (переводимый текст нужно помещать в игнорируемые теги)
      * @param string $content
      * @param string $language
-     * @param bool   $autotranslate
+     * @param bool   $autoTranslate
      * @return string
      */
-    public static function t($content, $language = '', $autotranslate = null)
+    public static function t($content, $language = '', $autoTranslate = null)
     {
-    	return self::init($content, $language, $autotranslate);
+    	return self::init($content, $language, $autoTranslate);
     }
     
     /**
      * Инициализация переводчика
      * @var string $content
      * @var string $language
-     * @var string $autotranslate - автоперевод после отдачи контента
+     * @var string $autoTranslate - автоперевод после отдачи контента
      * @return string     
      */
-    public static function init($content, $language = '', $autotranslate = null)
+    public static function init($content, $language = '', $autoTranslate = null)
     {
         //Устанавливаем значение автоперевода
-        if (is_bool($autotranslate)) {
-            self::setAutoTranslate($autotranslate);
+        if (is_bool($autoTranslate)) {
+            self::setAutoTranslate($autoTranslate);
         }
 
         //Проверяем инициализацию языка
@@ -152,9 +152,10 @@ class SLITranslate {
 
     	return $content;
     }
-    
+
     /**
      * Установить значение автоперевода
+     * @param $status
      */
     public static function setAutoTranslate($status)
     {
@@ -226,10 +227,11 @@ class SLITranslate {
 
         return self::$_allowPregUrls;
     }
-    
+
     /**
      * Проверить адрес на наличие правила для его игнорирования
-     * @return boolean
+     * @param $url
+     * @return bool
      */
     public static function isIgnoreUrl($url)
     {
@@ -595,12 +597,13 @@ class SLITranslate {
     	}
 
     	return $ignoreTags;
-    }     
-    
+    }
+
     /**
      * Получить тект для поиска по базе
-     * @var $text - string     
-     */         
+     * @var $text - string
+     * @return string
+     */
     public static function getSearchText($text)
     {
         $text = str_replace(array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '–',
@@ -614,8 +617,9 @@ class SLITranslate {
 
     /**
      * Получить текcт для перевода, очищенных от лишних пробелов и символов перевода строк
-     * @var $text - string     
-     */    
+     * @var $text - string
+     * @return string
+     */
     public static function getCleanText($text)
     {
         return trim(str_replace('  ', ' ', str_replace(array("\r\n", "\r", "\n", '&nbsp;'), ' ', $text)));
@@ -855,17 +859,14 @@ class SLITranslate {
             $upd->execute();
 		}
 	}
-	
-	/**
-	 * Удалить элемент перевода
-	 * @param mixed $id - integer или array из id элементов
-	 */
+
+    /**
+     * Удалить элемент перевода
+     * @param mixed $id - integer или array из id элементов
+     * @return bool
+     */
 	public static function deleteItem($id)
 	{
-        $result = false;
-        $data = array();
-
-        //удаляем айтемы
         if (!is_array($id)) {
             $id = array((int)$id);
         } else {
@@ -888,15 +889,5 @@ class SLITranslate {
         }
 
         return $result;
-	}   
-	
-    /**
-     * Очистить данные массива от последнего переноса строки
-     * @param array $array
-     */
-    public static function arrayNtrim(&$array)
-    {
-		$n = count($array);
-		for ($i=0;$i<$n;$i++){ $array[$i] = rtrim($array[$i], "\r\n");}
-    }
+	}
 }
