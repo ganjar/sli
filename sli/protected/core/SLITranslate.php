@@ -573,6 +573,7 @@ class SLITranslate {
     		if ($attr) { $regexp[] = '(?:'.$attr.')';}
     	}
 
+        //test regex https://regex101.com/r/4rYAGP/2
     	return '#
           (?:(?:>|\A)|(?:\s+(?:'.implode('|', $regexp).')\s*=\s*("|\')))
                 (?:(?:&\#?[a-z0-9]{1,7};)|[\s\d,.|!?/\#*+=^~`\-_&^%$@:©×()\[\]{}"\'\\\;])*
