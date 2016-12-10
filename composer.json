@@ -24,6 +24,8 @@
         "ext-mbstring": "*"
     },
     "autoload": {
-        "psr-4": {"sli\\": ""}
+        "psr-4": {
+            "Sli\\": ""
+        }
     }
 }

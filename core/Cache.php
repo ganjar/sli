@@ -5,7 +5,9 @@
  * Клас кэширования
  * @author Ganjar@ukr.net
  */
-class SLICache
+namespace Sli\core;
+
+class Cache
 {
 
 	/**
@@ -23,12 +25,12 @@ class SLICache
 	/**
 	 * Инициализация
 	 * @param $cacheId
-	 * @return SLICache
+     * @return Cache
 	 */
 	public static function getInstance($cacheId)
 	{
 		if (!isset(self::$_objects[$cacheId])) {
-			self::$_objects[$cacheId] = new SLICache();
+            self::$_objects[$cacheId]          = new Cache();
 			self::$_objects[$cacheId]->cacheId = $cacheId;
 		}
 

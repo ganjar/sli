@@ -4,13 +4,14 @@
  * Ядро системы
  * @author Ganjar@ukr.net
  */
-if (!defined('SLI_WORK_DIR')) { die('SLI_WORK_DIR is not defined');}
+namespace Sli\core;
 
-class SLICore {
+class Core
+{
 
     /**
      * Ядро системы
-     * @var SLICore
+     * @var Core
      */
     protected static $__core;
 
@@ -33,13 +34,13 @@ class SLICore {
     protected $__cache;
 
     /**
-     * @return SLICore
+     * @return Core
      */
     public static function getInstance()
     {
         if (is_null(self::$__core)) {
-            self::$__core = new SLICore();
-            self::$__core->__config = (object)include SLI_WORK_DIR.'/config/config.php';
+            self::$__core           = new Core();
+            self::$__core->__config = (object)include SLI_WORK_DIR . '/config/config.php';
             self::$__core->dbInit();
             self::$__core->cacheInit();
         }
@@ -51,10 +52,10 @@ class SLICore {
     {
         if ($this->config()->db['host'] && $this->config()->db['username'] && $this->config()->db['database']) {
             $this->__db = new PDO(
-                'mysql:host='.$this->config()->db['host'].';dbname='.$this->config()->db['database'].';charset='.$this->config()->db['encoding'].';',
+                'mysql:host=' . $this->config()->db['host'] . ';dbname=' . $this->config()->db['database'] . ';charset=' . $this->config()->db['encoding'] . ';',
                 $this->config()->db['username'],
                 $this->config()->db['password'],
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES ".$this->config()->db['encoding'])
+                [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . $this->config()->db['encoding']]
             );
         } else {
             $this->__db = false;
@@ -63,9 +64,10 @@ class SLICore {
 
     protected function cacheInit()
     {
-        if (SLISettings::getInstance()->getVar('cacheStatus')) {
+        if (Settings::getInstance()->getVar('cacheStatus')) {
             $this->__cache = new Memcache();
-            $this->__cache->connect($this->config()->memcache['host'], $this->config()->memcache['port']) or $this->__cache = false;
+            $this->__cache->connect($this->config()->memcache['host'],
+                $this->config()->memcache['port']) or $this->__cache = false;
         }
     }
 

@@ -5,10 +5,10 @@
  * Класс работы с настройками переводчика
  * @author Ganjar@ukr.net
  */
-if (!defined('SLI_WORK_DIR')) { die('SLI_WORK_DIR is not defined');}
-define('SLI_SETTINGS_FILE', SLI_WORK_DIR.'/data/settings.dat');
+namespace Sli\core;
 
-class SLISettings {
+class Settings
+{
 
     const LANGUAGES_VAR  = 'languages';
     const ORIGINAL_LANGUAGE_VAR  = 'originalLanguage';
@@ -41,7 +41,7 @@ class SLISettings {
     public static function getInstance()
     {
         if (is_null(self::$_instance)) {
-            self::$_instance = new SLISettings;
+            self::$_instance = new Settings;
         }
         
         return self::$_instance;

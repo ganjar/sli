@@ -3,8 +3,10 @@
  * SLIVersion
  * @author Ganjar@ukr.net
  */
+namespace Sli\core;
 
-class SLIVersion {
+class Version
+{
 
     const SITE_URL = 'sli.su';
     const CURRENT_VERSION = '1.1';

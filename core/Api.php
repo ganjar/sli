@@ -4,8 +4,10 @@
  * Клас API
  * @author Ganjar@ukr.net
  */
+namespace Sli\core;
 
-class SLIApi {
+class Api
+{
 
     /**
      * Список языков для вывода на сайте
@@ -24,14 +26,14 @@ class SLIApi {
             $requestUri = !empty($_SERVER['REQUEST_URI']) ? htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES) : '/';
 
             //Языки в админке
-            $langList = SLISettings::getInstance()->getVar(SLISettings::LANGUAGES_VAR);
+            $langList = Settings::getInstance()->getVar(Settings::LANGUAGES_VAR);
 
             //Выбранный язык
-            $lang = SLITranslate::getCurrentLanguage();
+            $lang = Translate::getCurrentLanguage();
 
             //Язык по умолчанию
-            $defaultLangAlias = SLISettings::getInstance()->getVar(SLISettings::ORIGINAL_LANGUAGE_VAR);
-            $allLanguages = SLISettings::getTranslateLanguages();
+            $defaultLangAlias = Settings::getInstance()->getVar(Settings::ORIGINAL_LANGUAGE_VAR);
+            $allLanguages     = Settings::getTranslateLanguages();
             if (!empty($allLanguages[$defaultLangAlias])) {
 
                 array_unshift($langList, array(
@@ -72,7 +74,7 @@ class SLIApi {
      */
     public static function ignoreStart($print = true)
     {
-        $tag = sprintf(SLITranslate::VAR_HTTP_PATTERN, 'ignore');
+        $tag = sprintf(Translate::VAR_HTTP_PATTERN, 'ignore');
         if ($print) {
             echo $tag;
         } else {
@@ -87,7 +89,7 @@ class SLIApi {
      */
     public static function ignoreEnd($print = true)
     {
-        $tag = sprintf(SLITranslate::VAR_HTTP_PATTERN, 'endIgnore');
+        $tag = sprintf(Translate::VAR_HTTP_PATTERN, 'endIgnore');
         if ($print) {
             echo $tag;
         } else {
@@ -103,7 +105,7 @@ class SLIApi {
      */
     public static function t($content, $language = '')
     {
-        return SLITranslate::t($content, $language);
+        return Translate::t($content, $language);
     }
 
     /**

@@ -1,12 +1,15 @@
 <?php
+
+namespace Sli\core;
+
 /**
- * SLIAdmin
+ * @deprecated
  * Клас админки
  * @author Ganjar@ukr.net
  */
+class Admin
+{
 
-class SLIAdmin {
-    
     const AUTH_ACTION 		= 'auth';
     const REGISTER_ACTION 	= 'registration';
     const AUTH_SESSION_NAME = 'SLI:AUTH';
@@ -15,48 +18,48 @@ class SLIAdmin {
      * Соль для шифровки паролей
      */
     const SALT = 'IK&(Iujasdaki';
-    
+
     /**
      * Кол-во элементов на странице
      */
     const PAGE_SIZE = 40;
-    
+
     /**
      * Шаблон для подключения прредставлений админки
      */
     const TEMPLATE_PATTERN = '%s/views/%s.php';
-	
+
     const LAYOUT_PATTERN = '%s/views/layouts/%s.php';
-    
+
     const URL_PATTERN = 'index.php?action=%s';
-    
+
     private static $action = 'index';
-    
+
     private static $title = 'Админка';
-    
+
     /**
      * Пользователь админки
      * @var boolean
      */
     private static $_user;
-    
+
     public static function init()
     {
     	session_start();
-    	
+
         //Проверка аутентификации
         self::isAuth();
-        
-        if (!empty($_GET['action']) && method_exists(__CLASS__, 'action'.$_GET['action'])) { 
+
+        if (!empty($_GET['action']) && method_exists(__CLASS__, 'action' . $_GET['action'])) {
             self::$action = $_GET['action'];
         }
-        
+
         if (!empty(self::$action)) {
             $actionName = 'action'.self::$action;
             self::$actionName();
         }
     }
-    
+
     /**
      * Проверка аутентификации пользователя
      */
@@ -65,59 +68,59 @@ class SLIAdmin {
         $user = self::getUser();
 
         if (!$user) {
-        	
+
         	//первая авторизация, показываем форму регистрации
         	if (is_null($user)) {
         		$actionName = 'action'.self::REGISTER_ACTION;
-        	} 
-        	
+            }
+
         	//пользователь не авторизирован, открываем форму авторизации
         	else {
         		$actionName = 'action'.self::AUTH_ACTION;
         	}
-        	
+
         	self::$actionName();
         	exit;
         }
-        
+
         return $user;
     }
-    
+
     /**
      * Получить пользователя админки
      */
     public static function getUser()
     {
     	if (is_null(self::$_user)) {
-    		
+
     		$isAuth = false;
-	    	$admin = SLISettings::getInstance()->getVar('admin');
+            $admin  = Settings::getInstance()->getVar('admin');
 
 			if (!empty($admin['login']) && !empty($admin['password'])) {
 	        	if (!empty($_SESSION[self::AUTH_SESSION_NAME]) && !empty($_SESSION[self::AUTH_SESSION_NAME]['login']) && !empty($_SESSION[self::AUTH_SESSION_NAME]['password'])) {
 	        		$isAuth = $_SESSION[self::AUTH_SESSION_NAME]['login']==$admin['login'] && $_SESSION[self::AUTH_SESSION_NAME]['password']==$admin['password'];
 	        	}
-	        	
+
 				if ($isAuth) {
 		        	self::$_user = $admin;
 		        } else {
 		        	self::$_user = false;
-		        }	        	
+                }
 	        }
     	}
 
     	return self::$_user;
     }
-    
+
     /**
      * Получить логин пользователя админки
      */
-    public static function getUserName()    
+    public static function getUserName()
     {
     	$user = self::getUser();
     	return $user ? $user['login'] : '';
     }
-    
+
     /**
      * Получить список табов
      */
@@ -128,86 +131,87 @@ class SLIAdmin {
             'vars'      => array ('title' => 'Переменные', 'action' => 'vars',),
             'scanner'    => array ('title' => 'Сканер', 'action' => 'scanner',),
             'settings'  => array ('title' => 'Настройки', 'action' => 'settings',),
-       ); 
+       );
     }
-    
+
     /**
      * Получить ссылку на екшин в админке
      */
     public static function getUrl($action, $params = null)
     {
         if (is_array($params)) { foreach ($params as $k=>$v) { $action .= '&'.$k.($v? '='.$v : '');}}
-        return sprintf(self::URL_PATTERN, $action); 
+
+        return sprintf(self::URL_PATTERN, $action);
     }
-    
+
     /**
      * Отрисовываем шаблон
      */
     public static function renderPage($templateName, $vars = array(), $layout = 'admin')
     {
         $renderFile = sprintf(self::TEMPLATE_PATTERN, SLI_WORK_DIR, $templateName);
-        $layOutFile = sprintf(self::LAYOUT_PATTERN, SLI_WORK_DIR, $layout); 
-        
+        $layOutFile = sprintf(self::LAYOUT_PATTERN, SLI_WORK_DIR, $layout);
+
         $title = self::$title;
-                
+
         if (file_exists($renderFile) && file_exists($layOutFile)) {
-            
+
             if ($vars) { foreach ($vars as $k=>$v) { $$k = $v;}}
-            
+
             ob_start();
             include $renderFile;
             $content = ob_get_contents();
             ob_end_clean();
-                       
+
             include $layOutFile;
         }
     }
-    
+
     /**
      * Отрисовываем часть страницы
      */
     public static function renderPartial($templateName, $vars = array(), $getContent = false)
     {
         $renderFile = sprintf(self::TEMPLATE_PATTERN, SLI_WORK_DIR, $templateName);
-                
+
         if (file_exists($renderFile)) {
-            
+
             if ($vars) { foreach ($vars as $k=>$v) { $$k = $v;}}
-            
+
             $getContent ? ob_start() : '';
-            
+
             include $renderFile;
-            
+
             if ($getContent) {
 	            $content = ob_get_contents();
 	            ob_end_clean();
 	            return $content;
             }
         }
-    }    
-    
+    }
+
     /**
      * Авторизация
      */
     private static function actionAuth()
     {
     	self::$title = 'Авторизация';
-    	
-    	$admin = SLISettings::getInstance()->getVar('admin');
+
+        $admin = Settings::getInstance()->getVar('admin');
 		if (!empty($_REQUEST['LoginForm']) && !empty($_REQUEST['LoginForm']['login']) && !empty($_REQUEST['LoginForm']['password'])) {
 
 			if ($_REQUEST['LoginForm']['login']==$admin['login'] && self::adminEncryp($_REQUEST['LoginForm']['password'])==$admin['password']) {
 				$_SESSION[self::AUTH_SESSION_NAME]['login'] = $admin['login'];
 				$_SESSION[self::AUTH_SESSION_NAME]['password'] = $admin['password'];
-				
+
     			header('Location: '.$_SERVER['REQUEST_URI']);
-    			exit;				
+                exit;
 			}
 		}
-    	
+
         self::renderPage('auth', array(), 'auth');
     }
-    
+
     /**
      * Регистрация
      */
@@ -216,22 +220,22 @@ class SLIAdmin {
     	self::$title = 'Регистрация';
 
     	$errors = array();
-    	
+
     	if (!empty($_REQUEST['LoginForm'])) {
-    		
+
     		if (!empty($_REQUEST['LoginForm']['login']) && filter_var($_REQUEST['LoginForm']['login'], FILTER_VALIDATE_EMAIL)) {
     			$data['login'] = $_REQUEST['LoginForm']['login'];
     		} else {
     			$errors['login'] = 'Не верно заполнено поле E-mail';
     		}
-    		
+
     		if (!empty($_REQUEST['LoginForm']['password']) && strlen($_REQUEST['LoginForm']['password'])>=4 && $_REQUEST['LoginForm']['password']==$_REQUEST['LoginForm']['applypassword']) {
     			$data['password'] = self::adminEncryp($_REQUEST['LoginForm']['password']);
     		} else {
     			if ($_REQUEST['LoginForm']['password']!=$_REQUEST['LoginForm']['applypassword']) {
-    				$errors['applypassword'] = 'Пароли должны совпадать';	
+                    $errors['applypassword'] = 'Пароли должны совпадать';
     			} else {
-    			    $errors['password'] = strlen($_REQUEST['LoginForm']['password'])<4 ? 'Пароль не может быть короче 4-х символов' : 'Не заполнено поле пароль';	
+                    $errors['password'] = strlen($_REQUEST['LoginForm']['password']) < 4 ? 'Пароль не может быть короче 4-х символов' : 'Не заполнено поле пароль';
     			}
     		}
 
@@ -242,18 +246,18 @@ class SLIAdmin {
                 $installSQL = file_get_contents(SLI_WORK_DIR.'/install/install.sql');
                 SLICore::getInstance()->db()->query($installSQL)->execute();
             }
-    		
+
     		if (!$errors) {
-    			SLISettings::setVar('admin', $data);
+                Settings::setVar('admin', $data);
     			header('Location: '.$_SERVER['REQUEST_URI']);
     			exit;
     		}
-    		
+
     	}
-    	
+
         self::renderPage('registration', array('errors' => $errors,), 'auth');
     }
-    
+
     /**
      * Выйти из админки
      */
@@ -262,11 +266,11 @@ class SLIAdmin {
     	if (!empty($_SESSION[self::AUTH_SESSION_NAME])) {
     		unset($_SESSION[self::AUTH_SESSION_NAME]);
     	}
-    	
+
     	header('Location: '.$_SERVER['REQUEST_URI']);
     	exit;
     }
-    
+
     /**
      * Шифруем пароль
      * @param string $password
@@ -282,16 +286,16 @@ class SLIAdmin {
     private static function actionIndex()
     {
     	self::$title = 'Перевод';
-    	
+
         $showSearch = false;
-        $settings = SLISettings::getInstance();
-        $languages = $settings->getVar(SLISettings::LANGUAGES_VAR);
-        
+        $settings   = Settings::getInstance();
+        $languages  = $settings->getVar(Settings::LANGUAGES_VAR);
+
         if (!empty($languages)) {
-            
+
             //данные фильтра
             !empty($_REQUEST['search']) ? $showSearch = true : $_REQUEST['search'] = array();
-            
+
             $search = self::getFilterVars();
 
             //определяем активный язык
@@ -304,7 +308,7 @@ class SLIAdmin {
                 }
             }
 
-            empty($language) ? $language = @array_shift($settings->getVar(SLISettings::LANGUAGES_VAR)) : '';
+            empty($language) ? $language = @array_shift($settings->getVar(Settings::LANGUAGES_VAR)) : '';
 
             //применяем фильтр
             $query = self::getFilterQuery($search);
@@ -335,7 +339,7 @@ class SLIAdmin {
             {
                 $original[$row['id']] = $row['original'];
                 if ($row['translate']) {
-                    $langAlias = SLITranslate::getLangAlias($row['language_id']);
+                    $langAlias = Translate::getLangAlias($row['language_id']);
                     if ($langAlias) {
                         $translate[$langAlias][$row['id']] = $row['translate'];
                     }
@@ -353,9 +357,9 @@ class SLIAdmin {
 
             //подготавливаем данные для шаблона
             $pageParams = array(
-                'search'        => $search,
-                'language'      => $language,
-                'languages'     => $languages,                
+                'search'    => $search,
+                'language'  => $language,
+                'languages' => $languages,
 
                 'original'      => $original,
                 'translate'     => $translate,
@@ -364,7 +368,7 @@ class SLIAdmin {
 
                 'showSearch'    => $showSearch,
             );
-            
+
             if (isset($_REQUEST['getJson'])) {
 				$ajaxData['result'] = self::renderPartial('indexAjaxPage', $pageParams, true);
             	echo json_encode($ajaxData);
@@ -376,7 +380,7 @@ class SLIAdmin {
             self::renderPage('emptyLanguages');
         }
     }
-    
+
     /**
      * Получить данные последней страницы с индексом формы поиска
      * @param array $search - значения поиска
@@ -386,20 +390,20 @@ class SLIAdmin {
     {
     	$page = 1;
     	$sessionPageName = self::getLastPageName();
-        
-    	if (!empty($_SESSION[$sessionPageName]) && $_SESSION[$sessionPageName]['index']==md5(serialize($search))) {
+
+        if (!empty($_SESSION[$sessionPageName]) && $_SESSION[$sessionPageName]['index']==md5(serialize($search))) {
 
     		$page = $_SESSION[$sessionPageName]['page'];
-            
+
             //временно. проблема с проработкой JS для большого объема
-            $page>3 ? $page = 3 : '';  
-            
+            $page > 3 ? $page = 3 : '';
+
     	}
-    	
-        
+
+
         return $page;
     }
-    
+
     /**
      * Запоминаем страницу на которой остановились
      * @param int $page - страница
@@ -408,16 +412,16 @@ class SLIAdmin {
     private static function setLastPage($page, array $search)
     {
     	$sessionPageName = self::getLastPageName();
-        
-    	$_SESSION[$sessionPageName] = array(
+
+        $_SESSION[$sessionPageName] = array(
         	'index' => md5(serialize($search)),
         	'page' 	=> $page,
         );
-    	
-        
-        return $_SESSION[$sessionPageName];    	
+
+
+        return $_SESSION[$sessionPageName];
     }
-    
+
     /**
      * Получить имя сессии последней страницы
      * @return string
@@ -426,14 +430,14 @@ class SLIAdmin {
     {
     	return __CLASS__.':'.self::$action.':page';
     }
-    
+
     /**
      * Сохраняем перевод
      */
     private static function actionSaveTranslate()
     {
         if (!empty($_POST['language']) && isset($_POST['idContent']) && isset($_POST['content'])) {
-        	SLITranslate::saveTranslate($_POST['idContent'], $_POST['language'], $_POST['content']);
+            Translate::saveTranslate($_POST['idContent'], $_POST['language'], $_POST['content']);
         }
     }
 
@@ -443,39 +447,39 @@ class SLIAdmin {
     private static function actionDeleteTranslate()
     {
         if (isset($_POST['idContent']) && is_array($_POST['idContent'])) {
-        	
-        	echo SLITranslate::deleteItem($_POST['idContent']) ? 1 : 0;           
-            exit;   
+
+            echo Translate::deleteItem($_POST['idContent']) ? 1 : 0;
+            exit;
         }
     }
-    
+
     /**
      * Переменные
      */
     private static function actionVars()
     {
     	self::$title = 'Переменные';
-    	
+
         $showSearch = false;
-        $settings = SLISettings::getInstance();
-        $languages = $settings->getVar(SLISettings::LANGUAGES_VAR);
-        
+        $settings   = Settings::getInstance();
+        $languages  = $settings->getVar(Settings::LANGUAGES_VAR);
+
         if (!empty($languages)) {
-        	
-        	//создаем переменную
+
+            //создаем переменную
         	if (!empty($_POST['create']) && !empty($_POST['create']['original'])) {
-				
-        		SLIVars::saveVar($_POST['create']);        		
-        		header('Location: '.$_SERVER['REQUEST_URI']); 
+
+                Vars::saveVar($_POST['create']);
+                header('Location: ' . $_SERVER['REQUEST_URI']);
                 exit;
         	}
-            
+
             //данные фильтра
             !empty($_REQUEST['search']) ? $showSearch = true : $_REQUEST['search'] = array();
-            
+
             $search = self::getFilterVars();
 
-            //определяем активный язык    
+            //определяем активный язык
             if (!empty($search['language'])) {
                 foreach ($languages as $value) {
                     if ($search['language']==$value['alias']) {
@@ -485,22 +489,24 @@ class SLIAdmin {
                 }
             }
 
-            empty($language) ? $language = @array_shift($settings->getVar(SLISettings::LANGUAGES_VAR)) : '';
+            empty($language) ? $language = @array_shift($settings->getVar(Settings::LANGUAGES_VAR)) : '';
 
             //подготавливаем список перевода
             $translate = array();
-            foreach($languages as $langValue) { $translate[$langValue['alias']] = SLIVars::getLanguageContent($langValue['alias']);}
-            $original = SLIVars::getOriginalContent();
-            
+            foreach ($languages as $langValue) {
+                $translate[$langValue['alias']] = Vars::getLanguageContent($langValue['alias']);
+            }
+            $original = Vars::getOriginalContent();
+
             //применяем фильтр
             self::applyFilter($original, $translate, $search);
-            
+
             //кол-во страниц
 			$allPages = ceil(count($original)/self::PAGE_SIZE);
-			
-			//Получаем страницу на которой остановились
+
+            //Получаем страницу на которой остановились
 	        $lastPage = self::getLastPage($search);
-				        
+
             //применяем лимит вывода
             if (isset($_REQUEST['getJson'])) {
 	            $page = !empty($_REQUEST['page']) ? (int)$_REQUEST['page'] : 0;
@@ -509,22 +515,22 @@ class SLIAdmin {
             } else {
 	            $original = array_slice($original, 0, self::PAGE_SIZE*$lastPage, true);
             }
-            
+
             //Задаем страницу на которой остановились
 	        !empty($_REQUEST['page']) ? self::setLastPage($_REQUEST['page'], $search) : '';
 
             //подготавливаем данные для шаблона
             $pageParams = array(
-                'search'        => $search,
-                'language'      => $language,
-                'languages'     => $languages,                
-                'original'      => $original,
-                'translate'     => $translate,
-                'allPages'     	=> $allPages,
-                'lastPage'     	=> $lastPage,
-                'showSearch'    => $showSearch,
+                'search'     => $search,
+                'language'   => $language,
+                'languages'  => $languages,
+                'original'   => $original,
+                'translate'  => $translate,
+                'allPages'   => $allPages,
+                'lastPage'   => $lastPage,
+                'showSearch' => $showSearch,
             );
-            
+
             if (isset($_REQUEST['getJson'])) {
 				$ajaxData['result'] = self::renderPartial('varsAjaxPage', $pageParams, true);
             	echo json_encode($ajaxData);
@@ -536,65 +542,66 @@ class SLIAdmin {
             self::renderPage('emptyLanguages');
         }
     }
-    
+
     /**
      * Сохраняем переменную
      */
     private static function actionSaveVarTranslate()
     {
         if (isset($_POST['idContent']) && ((!empty($_POST['language']) && isset($_POST['content'])) || !empty($_POST['content']))) {
-        	
-        	//Сохраняем переменную
-        	SLIVars::saveTranslate($_POST['idContent'], !empty($_POST['language']) ? $_POST['language'] : false, $_POST['content']);
+
+            //Сохраняем переменную
+            Vars::saveTranslate($_POST['idContent'], !empty($_POST['language']) ? $_POST['language'] : false,
+                $_POST['content']);
         }
     }
-    
+
     /**
      * Удаляем оригинал и все связанные переменные
      */
     private static function actionDeleteVar()
     {
         if (isset($_POST['idContent']) && is_array($_POST['idContent'])) {
-        	
-        	echo SLIVars::deleteItem($_POST['idContent']) ? 1 : 0;            
-            exit;   
+
+            echo Vars::deleteItem($_POST['idContent']) ? 1 : 0;
+            exit;
         }
-    }  
-    
+    }
+
     /**
      * Настроки
      */
     private static function actionSettings()
     {
     	self::$title = 'Настройки';
-    	
+
         $selectLanguage = 'en';
-        $settings = SLISettings::getInstance();
-        $admin = $settings->getVar('admin');
-        
+        $settings       = Settings::getInstance();
+        $admin          = $settings->getVar('admin');
+
         if (!empty($_POST['settings'])) {
             foreach ($_POST['settings'] as $k=>$value) {
-            	
-            	if ($k=='admin') {
-            		
-	            	if ((!empty($value['password']) || $value['login']!=$admin['login']) && self::adminEncryp($value['old_password'])==$admin['password'] && filter_var($value['login'], FILTER_VALIDATE_EMAIL)) {
-	            		
-	            		if (!empty($value['password']) && strlen($value['password'])>=4 && $value['applypassword']==$value['password']) {
-	            			$value['password'] = self::adminEncryp($value['password']);	
+
+                if ($k=='admin') {
+
+                    if ((!empty($value['password']) || $value['login']!=$admin['login']) && self::adminEncryp($value['old_password'])==$admin['password'] && filter_var($value['login'], FILTER_VALIDATE_EMAIL)) {
+
+                        if (!empty($value['password']) && strlen($value['password'])>=4 && $value['applypassword']==$value['password']) {
+                            $value['password'] = self::adminEncryp($value['password']);
 	            		} else {
 	            			$value['password'] = $admin['password'];
 	            		}
-	            		
-	            		unset($value['old_password'], $value['applypassword']);
-	            		
-	            		$settings->setVar($k, $value);
-	            	}            		
-	            	
+
+                        unset($value['old_password'], $value['applypassword']);
+
+                        $settings->setVar($k, $value);
+                    }
+
             	} else {
 
-            		if ($k==SLISettings::LANGUAGES_VAR) { 
-	                    foreach ($value as $langKey=>$langVal) { 
-	                        if (empty($langVal['alias'])) { 
+                    if ($k == Settings::LANGUAGES_VAR) {
+                        foreach ($value as $langKey => $langVal) {
+                            if (empty($langVal['alias'])) {
 	                            unset($value[$langKey]);
 	                        }
 	                    }
@@ -605,20 +612,20 @@ class SLIAdmin {
             header('Location: '.$_SERVER['REQUEST_URI']);
             exit;
         }
-        
+
         self::renderPage('settings', array(
             'settings'      => $settings,
             'admin' 	    => $admin,
         ));
-    }        
-    
+    }
+
     /**
      * Получить список языков используемых для автоперевода
      * @return array
      */
     public static function getTranslateLanguages()
     {
-    	return SLISettings::getTranslateLanguages();
+        return Settings::getTranslateLanguages();
     }
 
     /**
@@ -628,7 +635,7 @@ class SLIAdmin {
     {
     	return self::getHtmlOptions(self::getTranslateLanguages(), $selected);
     }
-    
+
     /**
      * Получить опции дропдауна
      */
@@ -645,12 +652,12 @@ class SLIAdmin {
      */
     private static function getFilterQuery(array $search)
     {
-        $query = array(
+        $query     = array(
             'where' => array(),
             'order' => '',
             'limit' => '',
         );
-        $languages = SLISettings::getInstance()->getVar(SLISettings::LANGUAGES_VAR);
+        $languages = Settings::getInstance()->getVar(Settings::LANGUAGES_VAR);
 
         //поиск по id
         if ($search['id']!==null) {
@@ -665,15 +672,15 @@ class SLIAdmin {
             //Поиск по URL
             if ($search['url']) {
 
-                $content = SLIScanner::getContent($search['url']);
-                $originalData = SLITranslate::getTranslateList($content);
+                $content      = Scanner::getContent($search['url']);
+                $originalData = Translate::getTranslateList($content);
 
                 if (!empty($originalData['search'])) {
 
                     //Формируем список аттрибутов для запроса в базу
-                    $request = SLITranslate::createOriginalKeys($originalData['search']);
+                    $request               = Translate::createOriginalKeys($originalData['search']);
                     $query['where']['url'] = array();
-                    $urlWhere = array();
+                    $urlWhere              = array();
                     foreach ($request as $k=>$v) {
                         $urlWhere[] = '(o.`a`="'.$v['a'].'" AND o.`search`="'.$v['search'].'")';
                     }
@@ -690,7 +697,7 @@ class SLIAdmin {
 
             //показываем только непереведенные айтемы
             if ($search['show_empty']) {
-                $languageId = !empty($search['language']) ? SLITranslate::getLangId($search['language']) : 0;
+                $languageId       = !empty($search['language']) ? Translate::getLangId($search['language']) : 0;
                 $query['where'][] = '(((t.content="" OR t.content IS NULL) AND t.language_id="'.$languageId.'") OR o.id NOT IN (
                     SELECT `sli_original`.`id` FROM `sli_original` , `sli_translate` WHERE `sli_original`.`id` = `sli_translate`.`original_id`  AND `sli_translate`.`language_id`="'.$languageId.'"
                 ))';
@@ -726,11 +733,11 @@ class SLIAdmin {
      */
     private static function applyFilter(array &$original, array &$translate, array $search)
     {
-    	$languages = SLISettings::getInstance()->getVar(SLISettings::LANGUAGES_VAR);
-    	
+        $languages = Settings::getInstance()->getVar(Settings::LANGUAGES_VAR);
+
 		//поиск по id
         if ($search['id']!==null) {
-            $original = !empty($original[$search['id']]) ? array($search['id'] => $original[$search['id']],) : array();     
+            $original = !empty($original[$search['id']]) ? [$search['id'] => $original[$search['id']],] : [];
         } else {
 
             //Поиск по фразе
@@ -748,8 +755,8 @@ class SLIAdmin {
 
             //Поиск по URL
             if ($search['url']) {
-                $originalIds = array();
-                $additionalData = SLITranslate::getAdditionalData();
+                $originalIds    = array();
+                $additionalData = Translate::getAdditionalData();
 
                 //Поиск по маске
                 if (!empty($search['url'][0]) && $search['url'][0]=='*') {
@@ -779,9 +786,9 @@ class SLIAdmin {
 
             //Поиск по переводу
             if ($search['translate'] && !empty($translate[$search['language']]) && $original) {
-            	
-            	$translateIds = self::arraySearch($translate[$search['language']], $search['translate']);
-            	                
+
+                $translateIds = self::arraySearch($translate[$search['language']], $search['translate']);
+
                 if ($translateIds) {
                     $translateTmp = array();
                     foreach ($translateIds as $key => $translateId) { $translateTmp[$translateId] = $translate[$search['language']][$translateId];}
@@ -793,14 +800,16 @@ class SLIAdmin {
                     $original = array();
                 }
             }
-            
+
             //показываем только непереведенные айтемы
             if ($search['show_empty'] && !empty($translate[$search['language']]) && $original) {
                 foreach($translate[$search['language']] as $key=>$value) {
-                    if (trim($value)) { unset($original[$key]);} 
+                    if (trim($value)) {
+                        unset($original[$key]);
+                    }
                 }
             }
-            
+
             //сортировка
             switch ($search['sort']) {
                 case 'id-desc':
@@ -813,11 +822,11 @@ class SLIAdmin {
                     break;
                 case 'original-desc':
                     arsort($original);
-                    break;                                            
-            }                                
-        }    	
+                    break;
+            }
+        }
     }
-    
+
     /**
      * Получить значения фильтра
      * @return array
@@ -834,10 +843,10 @@ class SLIAdmin {
 	        'language'      => !empty($_REQUEST['search']['language']) ? stripcslashes($_REQUEST['search']['language']) : ''
         );
     }
-    
+
     /**
      * Получить список возможных сортировок списка
-     */    
+     */
     public static function getSortList()
     {
         return array(
@@ -847,38 +856,38 @@ class SLIAdmin {
             'original-desc' => 'От Я-А',
         );
     }
-    
+
     /**
      * Поиск по массиву
      */
     public static function arraySearch(array $dataList, $search = '')
     {
         $idList = array();
-        
+
         if ($search) {
             foreach ($dataList as $key=>$value) {
                 if (mb_stripos($value, $search, 0, 'utf-8')!==false) {
-                    $idList[] = $key;            
-                }    
-            }            
+                    $idList[] = $key;
+                }
+            }
         }
-        
+
         return $idList;
     }
-    
+
     /**
      * Сканер страниц
      */
     public static function actionScanner()
     {
         self::renderPage('scanner');
-        
+
         if (isset($_POST['scanner']) && isset($_POST['scanner']['url'])) {
 
             $_POST['scanner']['last'] = !empty($_POST['scanner']['last']) ? $_POST['scanner']['last'] : 0;
             $_POST['scanner']['type'] = !empty($_POST['scanner']['type']) ? (int)$_POST['scanner']['type'] : 0;
 
-            SLIScanner::run(array(
+            Scanner::run(array(
                 'type'  => $_POST['scanner']['type'],
                 'url'   => $_POST['scanner']['url'],
                 'last'  => $_POST['scanner']['last'],
@@ -924,7 +933,7 @@ class SLIAdmin {
             $row = $dataQuery->fetch();
 
             if (!empty($row['id'])) {
-                SLITranslate::saveTranslate($row['id'], $langAlias, $value);
+                Translate::saveTranslate($row['id'], $langAlias, $value);
             }
         }
     }
@@ -937,8 +946,8 @@ class SLIAdmin {
     public static function setAllowTranslatePages($siteMapList = array(), $languageId)
     {
         $languageId = (int)$languageId;
-        $parseUrls = array();
-        $allowUrls = SLITranslate::getAllowUrls();
+        $parseUrls  = array();
+        $allowUrls  = Translate::getAllowUrls();
 
         foreach ($siteMapList as $parseUrl) {
 
@@ -957,16 +966,16 @@ class SLIAdmin {
                 echo 'Scan url: '.$parseUrl."\n";
 
                 //Получаем контент страницы
-                $content = SLIScanner::getContent($parseUrl);
+                $content = Scanner::getContent($parseUrl);
                 //Получаем список фраз на перевод
-                $originalData = SLITranslate::getTranslateList($content);
+                $originalData = Translate::getTranslateList($content);
 
                 if (!empty($originalData['search'])) {
 
                     //Формируем список аттрибутов для запроса в базу
-                    $request = SLITranslate::createOriginalKeys($originalData['search']);
+                    $request               = Translate::createOriginalKeys($originalData['search']);
                     $query['where']['url'] = array();
-                    $urlWhere = array();
+                    $urlWhere              = array();
                     foreach ($request as $k=>$v) {
                         $urlWhere[] = '(o.`a`="'.$v['a'].'" AND o.`search`="'.$v['search'].'")';
                     }
@@ -991,7 +1000,7 @@ class SLIAdmin {
 
         //Сохраняем разрешенные URL
         if ($allowUrls) {
-            SLISettings::getInstance()->setVar('allowUrls', implode("\n", $allowUrls));
+            Settings::getInstance()->setVar('allowUrls', implode("\n", $allowUrls));
         }
     }
 }
