@@ -1,6 +1,6 @@
 {
     "name": "ganjar/sli",
-    "description": "SLI - Site Language Injection Version 1.2",
+    "description": "SLI - Site Language Injection Version 2.0",
     "keywords": [
         "sli"
     ],
@@ -9,7 +9,7 @@
     "license": "Donationware",
     "authors": [
         {
-            "name": "Bogdan Rykhal",
+            "name": "Bohdan Rykhal",
             "email": "sli@sli.su",
             "homepage": "https://sli.su/",
             "role": "Founder"
@@ -21,7 +21,8 @@
     },
     "require": {
         "php": ">=5.2.0",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "psr/log": "~1.0"
     },
     "autoload": {
         "psr-4": {"sli\\": ""}
