@@ -55,9 +55,9 @@ CREATE TABLE sli_original (
   id      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   a       VARCHAR(64) BINARY CHARACTER SET utf8
           COLLATE utf8_bin NOT NULL
-  COMMENT 'Идекс (системный)|hidden',
+  COMMENT 'Индекс (системный)|hidden',
   search  TEXT             NOT NULL
-  COMMENT 'Идекс полный (системный)|hidden',
+  COMMENT 'Индекс полный (системный)|hidden',
   content TEXT             NOT NULL
   COMMENT 'Оригинал|textarea',
   PRIMARY KEY (id),
