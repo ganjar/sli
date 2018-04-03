@@ -12,9 +12,29 @@ namespace SLI\Language;
  */
 class Language implements LanguageInterface
 {
+    protected $id;
     protected $alias;
     protected $title;
     protected $isOriginal = false;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * @return string
@@ -64,7 +84,7 @@ class Language implements LanguageInterface
 
     /**
      * @param mixed $isOriginal
-     * @return Language
+     * @return $this
      */
     public function setIsOriginal($isOriginal)
     {

@@ -183,7 +183,7 @@ class SLI
             $originalPhrases[$searchPhrases[$phrase]] = $phrase;
         }
 
-        $translates = $this->getSource()->getTranslates($searchPhrases, $this->getLanguage()->getAlias());
+        $translates = $this->getSource()->getTranslates($searchPhrases, $this->getLanguage());
         foreach ($translates as $searchPhrase => &$translate) {
             if ($translate) {
                 $translate = $this->translatePostProcessor($originalPhrases[$searchPhrase], $translate);

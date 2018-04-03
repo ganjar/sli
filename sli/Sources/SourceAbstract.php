@@ -13,7 +13,7 @@ abstract class SourceAbstract implements SourceInterface
     {
         $translatePhrases = [];
         foreach ($phrases as $phrase) {
-            $translatePhrases[] = $this->getTranslate($phrase, $languageAlias);
+            $translatePhrases[$phrase] = $this->getTranslate($phrase, $languageAlias);
         }
 
         return $translatePhrases;

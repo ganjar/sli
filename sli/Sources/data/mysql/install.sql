@@ -37,10 +37,9 @@ CREATE TABLE sli_block_translate (
 
 CREATE TABLE sli_language (
   id                   TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
-  is_active            TINYINT(1)          NOT NULL DEFAULT 0
-  COMMENT 'Активность|checkbox',
-  alias                VARCHAR(8)          NOT NULL
-  COMMENT 'Алиас|text',
+  is_active            TINYINT(1)          NOT NULL DEFAULT 0 COMMENT 'Активность|checkbox',
+  alias                VARCHAR(8)          NOT NULL COMMENT 'Алиас|text',
+  title                VARCHAR(64) NOT NULL DEFAULT '' COMMENT 'Название|text',
   auto_translate_alias VARCHAR(8)                   DEFAULT NULL
   COMMENT 'Алиас для автопереводчика|text',
   PRIMARY KEY (id),
