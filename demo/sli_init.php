@@ -15,20 +15,19 @@ $sli = new SLI();
 
 //Задаем источник переводов
 $connection = new PDO("mysql:dbname=sli;host=localhost", 'root', 'hfccnjzybt');
+$connection->exec('SET NAMES utf8');
 $sliTranslateSource = new MySqlSource($connection);
-if (!$sliTranslateSource->isInstalled()) {
+//todo - use Install Source class
+/*if (!$sliTranslateSource->isInstalled()) {
     $sliTranslateSource->install();
-}
+}*/
 $sli->setSource($sliTranslateSource);
-$sli->setSource(new YandexSource('1'));
+//$sli->setSource(new YandexSource('1'));
 
-//Задаем обработчик выбора языка
-//todo - решить как определять язык и возможность кастомизации (COOKIE, URL, etc)
-//todo - вынести просто в SLIHelper определение языка на url
+//Задаем язык
 $language = new Language();
 $language->setAlias('ua')->setIsOriginal(false);
 $sli->setLanguage($language);
-
 
 //Добавляем обработчик буфера. В данном примере добавляем парсер html
 $sliHtmlTagProcessor = new HtmlTagProcessor();
@@ -36,9 +35,9 @@ $sliHtmlTagProcessor->setIgnoreTags(['style', 'script']);
 $sli->addProcessor($sliHtmlTagProcessor);
 
 //Добавляем парсер html аттрибутов
-/*$sliHtmlAttributesProcessor = new HtmlAttributesProcessor();
+$sliHtmlAttributesProcessor = new HtmlAttributesProcessor();
 $sliHtmlAttributesProcessor->setAllowAttributes(['title', 'alt']);
-$sli->addProcessor($sliHtmlAttributesProcessor);*/
+$sli->addProcessor($sliHtmlAttributesProcessor);
 
 //Добавляем обработчик буфера для замены в ссылках языковой приставки
 $linkProcessor = new HtmlLinkProcessor();
@@ -65,9 +64,10 @@ $sli->on(SLIEvents::EVENT_BEFORE_TRANSLATE_BUFFER, function($buffer){});
 $sli->on(SLIEvents::EVENT_AFTER_TRANSLATE_BUFFER, function($buffer){});
 $sli->on(SLIEvents::EVENT_CATCH_NON_TRANSLATED_TEXT, function($text){});*/
 
-$sli->getBuffer()->buffering(function(){
+/*$sli->getBuffer()->buffering(function(){
     echo '<b>Hello word</b>';
 });
+
 $sli->getBuffer()->start();
 
 echo '<b>Hello word</b>';
@@ -78,3 +78,5 @@ echo '<b>Hello word</b>';
 //Быстрый перевод
 //todo - придумать проверку того, что если метод вызывается в не закрытом buffer - надо не переводить повторно данную часть.
 echo $sli->translate('<b>Hello word</b>');
+
+$sli->getBuffer()->end();*/

@@ -2,6 +2,8 @@
 
 namespace SLI\Sources;
 
+use SLI\Language\LanguageInterface;
+
 class YandexSource extends SourceAbstract
 {
     /**
@@ -27,11 +29,11 @@ class YandexSource extends SourceAbstract
     }
 
     /**
-     * @param string $phrase
-     * @param string $languageAlias
+     * @param string            $phrase
+     * @param LanguageInterface $language
      * @return string
      */
-    public function getTranslate($phrase, $languageAlias)
+    public function getTranslate($phrase, LanguageInterface $language)
     {
         // TODO: Implement getTranslate() method.
     }

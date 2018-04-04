@@ -55,8 +55,6 @@ CREATE TABLE sli_original (
   a       VARCHAR(64) BINARY CHARACTER SET utf8
           COLLATE utf8_bin NOT NULL
   COMMENT 'Индекс (системный)|hidden',
-  search  TEXT             NOT NULL
-  COMMENT 'Индекс полный (системный)|hidden',
   content TEXT             NOT NULL
   COMMENT 'Оригинал|textarea',
   PRIMARY KEY (id),
@@ -69,7 +67,7 @@ CREATE TABLE sli_original (
 
 CREATE TABLE sli_setting (
   id    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  alias VARCHAR(32)      NOT NULL
+  name VARCHAR(32)      NOT NULL
   COMMENT 'Название блока настроек|text',
   data  MEDIUMBLOB                DEFAULT NULL
   COMMENT 'Данные|json',
