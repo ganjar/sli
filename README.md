@@ -4,16 +4,7 @@ sli
 SLI - Site Language Injection  <br>
 Make a website multilingualfor 5 minutes  <br>
 Мультиязычный сайт на php за 5 минут  <br>
-  <br>
-Текущая версия: 1.1 (Проверить обновления - http://sli.su/download/)<br>
-Лицензия: Donationware <br>
-Автор: Богдан Рыхаль (GANJAR) <br>
-Сайт: http://sli.su/<br>
-
-Продажа и публикация программы без согласия<br>
-автора - запрещена.<br>
-По всем вопросам пишите на Email: support@sli.su <br>
-
+<br>
 Требования:<br>
 Apache, PHP 5.2 и выше, mod_rewrite, MySQL, Memcache (для быстрой работы приложения. Не обязательно), PDO, mbString, SimpleXML<br>
 <br>
