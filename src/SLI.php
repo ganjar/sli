@@ -23,150 +23,25 @@ class SLI
     const EVENT_MISSING_TRANSLATION = 'missing_translation';
 
     /**
-     * @var SourceInterface
+     * @var Configurator
      */
-    protected $source;
+    protected $configurator;
 
     /**
-     * @var LanguageInterface
+     * SLI constructor.
+     * @param Configurator $configurator
      */
-    protected $language;
-
-    /**
-     * @var Buffer
-     */
-    protected $buffer;
-
-    /**
-     * @var ProcessorInterface[]
-     */
-    protected $processors = [];
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var Event
-     */
-    protected $event;
-
-    public function __construct()
+    public function __construct(Configurator $configurator)
     {
-        $this->on(self::EVENT_MISSING_TRANSLATION, function (SLI $sli, $phrase) {
-            $sli->getLogger()->notice('SLI: Missing translation for phrase: ' . $phrase);
-        });
+        $this->configurator = $configurator;
     }
 
     /**
-     * Add event
-     * EVENT_MISSING_TRANSLATION - You may set callback with (SLI $sli, $phrase, ProcessorInterface $processor = null)
-     * @param          $event
-     * @param \Closure $callback - (SLI $sli, ...$data)
+     * @return Configurator
      */
-    public function on($event, \Closure $callback)
+    public function getConfigurator()
     {
-        $this->getEvent()->on($event, $callback);
-    }
-
-    /**
-     * @return Event
-     */
-    public function getEvent()
-    {
-        if (!$this->event) {
-            $this->setEvent(new Event());
-        }
-
-        return $this->event;
-    }
-
-    /**
-     * @param Event $event
-     */
-    public function setEvent(Event $event)
-    {
-        $this->event = $event;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        if (!$this->logger) {
-            $this->setLogger(new \Psr\Log\NullLogger());
-        }
-
-        return $this->logger;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * Add translate processor
-     * @param ProcessorInterface $processor
-     */
-    public function addProcessor(ProcessorInterface $processor)
-    {
-        $processor->setSli($this);
-        $this->processors[] = $processor;
-    }
-
-    /**
-     * @return SourceInterface
-     */
-    public function getSource()
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param SourceInterface $source
-     * @return SLI
-     */
-    public function setSource(SourceInterface $source)
-    {
-        $this->source = $source;
-
-        return $this;
-
-    }
-
-    /**
-     * @return LanguageInterface
-     */
-    public function getLanguage()
-    {
-        return $this->language;
-    }
-
-    /**
-     * @param LanguageInterface $language
-     * @return SLI
-     */
-    public function setLanguage(LanguageInterface $language)
-    {
-        $this->language = $language;
-
-        return $this;
-    }
-
-    /**
-     * Trigger custom event
-     * @param       $event
-     * @param array ...$data
-     */
-    public function trigger($event, ...$data)
-    {
-        $this->getEvent()->trigger($event, $this, ...$data);
+        return $this->configurator;
     }
 
     /**
@@ -176,19 +51,22 @@ class SLI
      */
     public function translateAll(array $phrases, \Closure $missingTranslationCallback = null)
     {
-        $searchPhrases = $originalPhrases =[];
+        $searchPhrases = $originalPhrases = [];
         foreach ($phrases as $phrase) {
             $searchPhrases[$phrase] = $this->originalPreProcessor($phrase);
             //Массив с обратным индексом оригинал => текст для поиска в источнике
             $originalPhrases[$searchPhrases[$phrase]] = $phrase;
         }
 
-        $translates = $this->getSource()->getTranslates($searchPhrases, $this->getLanguage());
+        $translates = $this->getConfigurator()->getSource()->getTranslates(
+            $searchPhrases,
+            $this->getConfigurator()->getLanguage()
+        );
         foreach ($translates as $searchPhrase => &$translate) {
             if ($translate) {
                 $translate = $this->translatePostProcessor($originalPhrases[$searchPhrase], $translate);
             } else {
-                $this->trigger(SLI::EVENT_MISSING_TRANSLATION, $searchPhrase, $this);
+                $this->getConfigurator()->getEvent()->trigger(SLI::EVENT_MISSING_TRANSLATION, $searchPhrase, $this);
                 if ($missingTranslationCallback) {
                     $translate = $missingTranslationCallback($searchPhrase, $this);
                 }
@@ -239,7 +117,7 @@ class SLI
         preg_match_all('#(?:[\d])+#u', $original, $symbols);
         preg_match_all('#(?:[\d])+#u', $translate, $tSymbols);
 
-        $symbols  = $symbols[0];
+        $symbols = $symbols[0];
         $tSymbols = $tSymbols[0];
 
         if (!empty($symbols)) {
@@ -261,65 +139,30 @@ class SLI
     }
 
     /**
-     * This method start global buffering.
-     * Before render page - we replace all buffer keys to translated content
-     */
-    protected function startGlobalBuffering()
-    {
-        ob_start(function ($content) {
-            return $this->processAllBuffers($content);
-        });
-    }
-
-    /**
      * Process all buffers and clear stack
      * @param $content
      * @return mixed
      */
-    protected function processAllBuffers($content)
+    public function processAllBuffers($content)
     {
-        $buffers = $this->getBuffer()->getBuffers();
+        $buffers = $this->getConfigurator()->getBuffer()->getBuffers();
 
         foreach ($buffers as $bufferKey => $buffer) {
 
-            if (!$this->getLanguage()->getIsOriginal()) {
+            if (!$this->getConfigurator()->getLanguage()->getIsOriginal()) {
                 $buffer = $this->process($buffer);
             }
 
             $content = str_replace(
-                $this->getBuffer()->getBufferKey($bufferKey),
+                $this->getConfigurator()->getBuffer()->getBufferKey($bufferKey),
                 $buffer,
                 $content
             );
         }
 
-        $this->getBuffer()->clear();
+        $this->getConfigurator()->getBuffer()->clear();
 
         return $content;
-    }
-
-    /**
-     * @return Buffer
-     */
-    public function getBuffer()
-    {
-        if (is_null($this->buffer)) {
-            $this->setBuffer(new Buffer());
-            $this->startGlobalBuffering();
-        }
-
-        return $this->buffer;
-    }
-
-    /**
-     * @param Buffer $buffer
-     * @return SLI
-     */
-    public function setBuffer(Buffer $buffer)
-    {
-        $this->buffer = $buffer;
-
-        return $this;
     }
 
     /**
@@ -329,29 +172,10 @@ class SLI
      */
     public function process($content)
     {
-        foreach ($this->getProcessors() as $processor) {
+        foreach ($this->getConfigurator()->getProcessors() as $processor) {
             $content = $processor->process($content);
         }
 
         return $content;
-    }
-
-    /**
-     * @return ProcessorInterface[]
-     */
-    public function getProcessors()
-    {
-        return $this->processors;
-    }
-
-    /**
-     * @param ProcessorInterface[] $processors
-     * @return SLI
-     */
-    public function setProcessors($processors)
-    {
-        $this->processors = $processors;
-
-        return $this;
     }
 }
