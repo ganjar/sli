@@ -3,7 +3,7 @@
 namespace SLI\Processors;
 
 use SLI\Exceptions\SliLogicException;
-use SLI\SLI;
+use SLI\Translate;
 
 /**
  * Interface ProcessorInterface
@@ -17,28 +17,28 @@ abstract class ProcessorAbstract implements ProcessorInterface
     protected $missingTranslationCallback;
 
     /**
-     * @var SLI
+     * @var Translate
      */
-    protected $sli;
+    protected $translate;
 
     /**
-     * @return SLI
+     * @return Translate
      */
-    public function getSli()
+    public function getTranslate()
     {
-        if (!$this->sli) {
-            throw new SliLogicException('Uninitialized SLI object');
+        if (!$this->translate) {
+            throw new SliLogicException('Uninitialized Translate object');
         }
-        return $this->sli;
+        return $this->translate;
     }
 
     /**
-     * @param SLI $sli
+     * @param Translate $translate
      * @return $this
      */
-    public function setSli(SLI $sli)
+    public function setTranslate(Translate $translate)
     {
-        $this->sli = $sli;
+        $this->translate = $translate;
 
         return $this;
     }

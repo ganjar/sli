@@ -59,7 +59,7 @@ class HtmlTagProcessor extends ProcessorAbstract
         }
 
         $pos = 0;
-        $translateData = $this->getSli()->translateAll($originalData['clean']);
+        $translateData = $this->getTranslate()->translateAll($originalData['clean']);
 
         foreach ($originalData['original'] AS $k => $v) {
             $clean = $originalData['clean'][$k];

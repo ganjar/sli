@@ -8,8 +8,8 @@
 namespace SLI;
 
 
+use function is_null;
 use Psr\Log\LoggerInterface;
-use SLI\Exceptions\SliLogicException;
 use SLI\Language\LanguageInterface;
 use SLI\Processors\ProcessorInterface;
 use SLI\Sources\SourceInterface;
@@ -49,6 +49,11 @@ class Configurator
      * @var Event
      */
     protected $event;
+
+    /**
+     * @var Translate
+     */
+    protected $translate;
 
     /**
      * @return Event
@@ -100,7 +105,7 @@ class Configurator
 
     /**
      * @param ProcessorInterface[] $processors
-     * @return SLI
+     * @return $this
      */
     public function setProcessors($processors)
     {
@@ -115,7 +120,7 @@ class Configurator
      */
     public function addProcessor(ProcessorInterface $processor)
     {
-        $processor->setSli($this);
+        $processor->setTranslate($this->getTranslate());
         $this->processors[] = $processor;
     }
 
@@ -129,7 +134,7 @@ class Configurator
 
     /**
      * @param SourceInterface $source
-     * @return SLI
+     * @return $this
      */
     public function setSource(SourceInterface $source)
     {
@@ -149,7 +154,7 @@ class Configurator
 
     /**
      * @param LanguageInterface $language
-     * @return SLI
+     * @return $this
      */
     public function setLanguage(LanguageInterface $language)
     {
@@ -172,11 +177,34 @@ class Configurator
 
     /**
      * @param Buffer $buffer
-     * @return SLI
+     * @return $this
      */
     public function setBuffer(Buffer $buffer)
     {
         $this->buffer = $buffer;
+
+        return $this;
+    }
+
+    /**
+     * @return Translate
+     */
+    public function getTranslate()
+    {
+        if (is_null($this->translate)) {
+            $translate = new Translate($this->getLanguage(), $this->getSource(), $this->getEvent());
+            $this->setTranslate($translate);
+        }
+        return $this->translate;
+    }
+
+    /**
+     * @param Translate $translate
+     * @return $this
+     */
+    public function setTranslate(Translate $translate)
+    {
+        $this->translate = $translate;
 
         return $this;
     }

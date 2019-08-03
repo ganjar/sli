@@ -39,5 +39,6 @@ class HtmlAttributesProcessor extends ProcessorAbstract
     public function process($buffer)
     {
         // TODO: Implement process() method.
+        return $buffer;
     }
 }

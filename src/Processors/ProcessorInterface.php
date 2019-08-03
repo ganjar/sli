@@ -2,7 +2,7 @@
 
 namespace SLI\Processors;
 
-use SLI\SLI;
+use SLI\Translate;
 
 /**
  * Interface ProcessorInterface
@@ -11,15 +11,15 @@ use SLI\SLI;
 interface ProcessorInterface
 {
     /**
-     * @param SLI $sli
+     * @param Translate $translate
      * @return $this
      */
-    public function setSli(SLI $sli);
+    public function setTranslate(Translate $translate);
 
     /**
-     * @return SLI
+     * @return Translate
      */
-    public function getSli();
+    public function getTranslate();
 
     /**
      * $missingTranslateCallback - function with 2 arguments ($phrase, $this)

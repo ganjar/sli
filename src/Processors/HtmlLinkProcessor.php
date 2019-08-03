@@ -50,7 +50,7 @@ class HtmlLinkProcessor extends ProcessorAbstract
         //todo - set allowToTranslateURLs
         //$allow = self::getAllowPregString();
         $allow = false;
-        $language = $this->getSli()->getLanguage()->getAlias();
+        $language = $this->getTranslate()->getLanguage()->getAlias();
         $host = preg_quote($_SERVER['HTTP_HOST']);
         $buffer = preg_replace('#<(a|base)(?! %)([^>]*)href=("|\')((/)(?!' . $language . '/)|(https?://' . $host . ')(?!/' . $language . '/))(' . ($allow ? $allow : '[^>]*') . ')(?!\\\)\\3(.*)>#Usi',
             '<$1$2href=$3$6/' . $language . '$5$7$3$8>', $buffer);
@@ -74,13 +74,13 @@ class HtmlLinkProcessor extends ProcessorAbstract
      */
     public function getLocalizedUrl($url)
     {
-        if (!$this->getSli()->getLanguage()->getIsOriginal()
+        if (!$this->getTranslate()->getLanguage()->getIsOriginal()
             && is_string($url)
             && ($url[0] == '/' || strpos($url, 'http://') !== false || strpos($url, 'https://') !== false)
         ) {
             //todo
             //$allow = self::getAllowPregString();
-            $language = $this->getSli()->getLanguage()->getAlias();
+            $language = $this->getTranslate()->getLanguage()->getAlias();
             $allow = false;
             $url = preg_replace('#^((?:(/)(?!' . $language . '/))|(?:(https?://' . preg_quote($_SERVER['HTTP_HOST']) . ')(?!/' . $language . '/)))(' . ($allow ? $allow : '.*') . ')$#Ui',
                 '$3/' . $language . '$2$4', $url);
