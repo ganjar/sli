@@ -185,11 +185,10 @@ class MySqlSource extends PdoSourceAbstract
         return $this->getTables()['translate'];
     }
 
-    //////todo - move to install source class
     /**
      * @return bool
      */
-    protected function isInstalled()
+    public function isInstalled()
     {
         return $this->getPdo()->query(
             'select COUNT(*) from information_schema.tables where table_schema=DATABASE() AND TABLE_NAME="sli_setting"'
@@ -199,14 +198,16 @@ class MySqlSource extends PdoSourceAbstract
     /**
      * @return bool
      */
-    protected function install()
+    public function install()
     {
         $sqlCommands = explode(';', trim(file_get_contents(
             __DIR__ .
             DIRECTORY_SEPARATOR .
             'data' .
             DIRECTORY_SEPARATOR .
-            'mysql.sql'
+            'mysql' .
+            DIRECTORY_SEPARATOR .
+            'install.sql'
         )));
 
         foreach ($sqlCommands as $sqlCommand) {
@@ -246,22 +247,5 @@ class MySqlSource extends PdoSourceAbstract
         }
 
         return true;
-    }
-
-
-    /**
-     * @return bool
-     */
-    protected function isNeedUpdate()
-    {
-        //todo
-        //return self::VERSION > $this->getSettings()['version'];
-        return false;
-    }
-
-    //todo
-    protected function update()
-    {
-
     }
 }
