@@ -7,25 +7,32 @@ use SLI\Processors\HtmlAttributesProcessor;
 use SLI\Processors\HtmlLinkProcessor;
 use SLI\Processors\HtmlTagProcessor;
 use SLI\SLI;
+use SLI\Sources\FileSource;
 use SLI\Sources\MySqlSource;
 
 $configurator = new Configurator();
 $sli = new SLI($configurator);
 
 //Задаем источник переводов
-$connection = new PDO("mysql:dbname=sli;host=localhost", 'root', 'root');
+
+//From MySQL
+/*$connection = new PDO("mysql:dbname=sli;host=localhost", 'root', 'root');
 $connection->exec('SET NAMES utf8');
 $sliTranslateSource = new MySqlSource($connection);
 if (!$sliTranslateSource->isInstalled()) {
     $sliTranslateSource->install();
 }
-$configurator->setSource($sliTranslateSource);
+$configurator->setSource($sliTranslateSource);*/
+
+//From file
+$fileSource = new FileSource(__DIR__ . '/translates/uk.txt', '||');
+$configurator->setSource($fileSource);
 
 //Задаем обработчик выбора языка
 //todo - решить как определять язык и возможность кастомизации (COOKIE, URL, etc)
 //todo - вынести просто в SLIHelper определение языка на url
 $language = new Language();
-$language->setAlias('ua');
+$language->setAlias('uk');
 $configurator->setLanguage($language);
 
 
