@@ -8,7 +8,7 @@
 namespace SLI\Sources;
 
 use PDO;
-use SLI\Exceptions\SliLogicException;
+use SLI\Exceptions\SliException;
 use SLI\Language\LanguageInterface;
 
 /**
@@ -17,8 +17,6 @@ use SLI\Language\LanguageInterface;
  */
 class MySqlSource extends PdoSourceAbstract
 {
-    const VERSION = 2.0;
-
     /**
      * @var array
      */
@@ -43,6 +41,7 @@ class MySqlSource extends PdoSourceAbstract
      * @param string            $phrase
      * @param LanguageInterface $language
      * @return string
+     * @throws SliException
      */
     public function getTranslate($phrase, LanguageInterface $language)
     {
@@ -50,7 +49,7 @@ class MySqlSource extends PdoSourceAbstract
             return $translate;
         }
 
-        throw new SliLogicException('Empty list of translated phrases');
+        throw new SliException('Empty list of translated phrases');
     }
 
     /**

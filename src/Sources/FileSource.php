@@ -2,13 +2,14 @@
 
 namespace SLI\Sources;
 
-use Exception;
 use function explode;
 use function file;
 use function file_exists;
 use function is_null;
 use function is_readable;
 use SLI\Language\LanguageInterface;
+use SLI\Sources\Exceptions\FileNotFoundException;
+use SLI\Sources\Exceptions\FileReadPermissionsException;
 
 class FileSource extends SourceAbstract
 {
@@ -50,6 +51,8 @@ class FileSource extends SourceAbstract
      * @param string            $phrase
      * @param LanguageInterface $language
      * @return string
+     * @throws FileNotFoundException
+     * @throws FileReadPermissionsException
      */
     public function getTranslate($phrase, LanguageInterface $language)
     {
@@ -62,17 +65,19 @@ class FileSource extends SourceAbstract
 
     /**
      * @return array
+     * @throws FileNotFoundException
+     * @throws FileReadPermissionsException
      */
     protected function parseFile()
     {
         $translates = [];
+
         if (!file_exists($this->getPath())) {
-            //todo - custom exception
-            throw new Exception('File source for translates not found');
+            throw new FileNotFoundException('File source for translates not found' . $this->getPath());
         }
+
         if (!is_readable($this->getPath())) {
-            //todo - custom exception
-            throw new Exception('Cannot read file');
+            throw new FileReadPermissionsException('Cannot read file ' . $this->getPath());
         }
 
         $lines = file($this->getPath());

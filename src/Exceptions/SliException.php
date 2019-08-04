@@ -6,12 +6,12 @@
  */
 namespace SLI\Exceptions;
 
-use LogicException;
+use Exception;
 
 /**
  * @author GANJAR (Bohdan Rykhal)
  */
-class SliLogicException extends LogicException
+class SliException extends Exception
 {
 
 }

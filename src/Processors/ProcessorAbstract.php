@@ -2,7 +2,7 @@
 
 namespace SLI\Processors;
 
-use SLI\Exceptions\SliLogicException;
+use SLI\Exceptions\SliException;
 use SLI\Translate;
 
 /**
@@ -23,11 +23,12 @@ abstract class ProcessorAbstract implements ProcessorInterface
 
     /**
      * @return Translate
+     * @throws SliException
      */
     public function getTranslate()
     {
         if (!$this->translate) {
-            throw new SliLogicException('Uninitialized Translate object');
+            throw new SliException('Uninitialized Translate object');
         }
         return $this->translate;
     }
