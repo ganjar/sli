@@ -41,6 +41,7 @@ class SLI
      * Process all buffers and clear stack
      * @param $content
      * @return mixed
+     * @throws Exceptions\SliConfiguratorException
      */
     public function processAllBuffers($content)
     {
@@ -88,6 +89,7 @@ class SLI
 
     /**
      * @return Translate
+     * @throws Exceptions\SliConfiguratorException
      */
     public function getTranslate()
     {

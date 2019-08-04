@@ -9,6 +9,7 @@
 namespace SLI;
 
 
+use SLI\Exceptions\SliException;
 use SLI\Language\LanguageInterface;
 use SLI\Sources\SourceInterface;
 
@@ -107,6 +108,7 @@ class Translate
      * @param string        $phrase
      * @param \Closure|null $missingTranslationCallback - ($phrase, SLI $sli)
      * @return string
+     * @throws SliException
      */
     public function translate($phrase, \Closure $missingTranslationCallback = null)
     {
@@ -114,7 +116,7 @@ class Translate
             return $translate;
         }
 
-        throw new SliLogicException('Empty list of translated phrases');
+        throw new SliException('Empty list of translated phrases');
     }
 
     /**

@@ -10,6 +10,7 @@ namespace SLI;
 
 use function is_null;
 use Psr\Log\LoggerInterface;
+use SLI\Exceptions\SliConfiguratorException;
 use SLI\Language\LanguageInterface;
 use SLI\Processors\ProcessorInterface;
 use SLI\Sources\SourceInterface;
@@ -117,6 +118,7 @@ class Configurator
     /**
      * Add translate processor
      * @param ProcessorInterface $processor
+     * @throws SliConfiguratorException
      */
     public function addProcessor(ProcessorInterface $processor)
     {
@@ -126,9 +128,14 @@ class Configurator
 
     /**
      * @return SourceInterface
+     * @throws SliConfiguratorException
      */
     public function getSource()
     {
+        if (!$this->source) {
+            throw new SliConfiguratorException('Source is not initialized');
+        }
+
         return $this->source;
     }
 
@@ -146,9 +153,14 @@ class Configurator
 
     /**
      * @return LanguageInterface
+     * @throws SliConfiguratorException
      */
     public function getLanguage()
     {
+        if (!$this->language) {
+            throw new SliConfiguratorException('Language is not initialized');
+        }
+
         return $this->language;
     }
 
@@ -188,6 +200,7 @@ class Configurator
 
     /**
      * @return Translate
+     * @throws SliConfiguratorException
      */
     public function getTranslate()
     {
