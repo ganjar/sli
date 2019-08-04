@@ -90,17 +90,10 @@ class MySqlSource extends PdoSourceAbstract
         }
 
         //фразы, которых нет в БД
-        $savePhrases = [];
         foreach ($phrases as $phrase) {
             if (!array_key_exists($phrase, $translates)) {
-                $translates[$phrase] = null;
-                $savePhrases[$phrase] = $phrase;
+                $translates[$phrase] = '';
             }
-        }
-
-        //сохранение новых фраз в БД
-        if ($savePhrases) {
-            $this->insertPhrases($savePhrases);
         }
 
         return $translates;
@@ -130,7 +123,7 @@ class MySqlSource extends PdoSourceAbstract
      * @param $phrases
      * @return boolean
      */
-    private function insertPhrases($phrases)
+    public function insertPhrases($phrases)
     {
         if (!$phrases) {
             return false;
