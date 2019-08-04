@@ -85,4 +85,12 @@ class SLI
     {
         return $this->getConfigurator()->getBuffer();
     }
+
+    /**
+     * @return Translate
+     */
+    public function getTranslate()
+    {
+        return $this->getConfigurator()->getTranslate();
+    }
 }
