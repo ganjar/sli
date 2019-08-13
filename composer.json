@@ -21,8 +21,7 @@
     },
     "require": {
         "php": ">=5.2.0",
-        "ext-mbstring": "*",
-        "psr/log": "~1.0"
+        "ext-mbstring": "*"
     },
     "autoload": {
         "psr-4": {

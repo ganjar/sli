@@ -43,22 +43,4 @@ abstract class ProcessorAbstract implements ProcessorInterface
 
         return $this;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getMissingTranslationCallback()
-    {
-        return $this->missingTranslationCallback;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setMissingTranslationCallback(\Closure $missingTranslationCallback)
-    {
-        $this->missingTranslationCallback = $missingTranslationCallback;
-
-        return $this;
-    }
 }

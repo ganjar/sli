@@ -16,7 +16,9 @@ class HtmlAttributesProcessor extends ProcessorAbstract
 
     protected $allowAttributes = [];
 
+
     /**
+     * Allow html attributes translation
      * @return array
      */
     public function getAllowAttributes()

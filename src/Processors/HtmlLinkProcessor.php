@@ -15,29 +15,10 @@ namespace SLI\Processors;
  */
 class HtmlLinkProcessor extends ProcessorAbstract
 {
-
-    protected $allowAttributes = [];
-
-    /**
-     * @return array
-     */
-    public function getAllowAttributes()
-    {
-        return $this->allowAttributes;
-    }
-
-    /**
-     * @param array $allowAttributes
-     */
-    public function setAllowAttributes($allowAttributes)
-    {
-        $this->allowAttributes = $allowAttributes;
-    }
-
-
     /**
      * @param string $buffer
      * @return string
+     * @throws \SLI\Exceptions\SliException
      */
     public function process($buffer)
     {
@@ -71,6 +52,7 @@ class HtmlLinkProcessor extends ProcessorAbstract
      * Получить локализованный адрес (только полные адреса начинающиеся на / или https?://)
      * @var string
      * @return string
+     * @throws \SLI\Exceptions\SliException
      */
     public function getLocalizedUrl($url)
     {

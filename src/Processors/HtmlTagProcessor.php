@@ -18,6 +18,7 @@ class HtmlTagProcessor extends ProcessorAbstract
     const HTML_VAR_PATTERN = '<!--SLI::%s-->';
 
     /**
+     * Disallow HTML tags translation
      * @return array
      */
     public function getIgnoreTags()
@@ -39,6 +40,7 @@ class HtmlTagProcessor extends ProcessorAbstract
     /**
      * @param string $buffer
      * @return string
+     * @throws \SLI\Exceptions\SliException
      */
     public function process($buffer)
     {
@@ -97,11 +99,9 @@ class HtmlTagProcessor extends ProcessorAbstract
         //test regex https://regex101.com/r/4rYAGP/4
         return '#
           (?:>|\A)
-                (?:(?:&\#?[a-z0-9]{1,7};)|[^a-zа-яёїі<>])*
-            		([a-zа-яёїі][^<]*[,.!?:;)}\]]?)(?![,.!?:;)}\]])
-                (?:(?:&\#?[a-z0-9]{1,7};)|[^a-zа-яёїі<>])*
-  		  (?:(?:(?!\\\)\\1)|(?:<|\Z))
-        #Uuxsi';
+            ([^<]+)
+  		  (?:<|\Z))
+        #Uusi';
     }
 
     /**

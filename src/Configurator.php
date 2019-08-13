@@ -9,7 +9,6 @@ namespace SLI;
 
 
 use function is_null;
-use Psr\Log\LoggerInterface;
 use SLI\Exceptions\SliConfiguratorException;
 use SLI\Language\LanguageInterface;
 use SLI\Processors\ProcessorInterface;
@@ -42,11 +41,6 @@ class Configurator
     protected $processors = [];
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var Event
      */
     protected $event;
@@ -74,26 +68,6 @@ class Configurator
     public function setEvent(Event $event)
     {
         $this->event = $event;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        if (!$this->logger) {
-            $this->setLogger(new \Psr\Log\NullLogger());
-        }
-
-        return $this->logger;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 
     /**
