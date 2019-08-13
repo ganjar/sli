@@ -18,26 +18,6 @@ use SLI\Language\LanguageInterface;
 class MySqlSource extends PdoSourceAbstract
 {
     /**
-     * @var array
-     */
-    protected $settings;
-
-
-    /**
-     * @return array
-     */
-    public function getSettings()
-    {
-        if (is_null($this->settings)) {
-            $this->settings = $this->getPdo()->query(
-                'select * from sli_setting'
-            )->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return $this->settings;
-    }
-
-    /**
      * @param string            $phrase
      * @param LanguageInterface $language
      * @return string
@@ -89,7 +69,7 @@ class MySqlSource extends PdoSourceAbstract
             $translates[$translateRow['original']] = $translateRow['translate'];
         }
 
-        //фразы, которых нет в БД
+        //phrases that aren't in the database
         foreach ($phrases as $phrase) {
             if (!array_key_exists($phrase, $translates)) {
                 $translates[$phrase] = '';
@@ -100,7 +80,7 @@ class MySqlSource extends PdoSourceAbstract
     }
 
     /**
-     * Сгенерировать ключи для БД
+     * Generate keys for find in database
      * @param array $phrases
      * @return array
      */
@@ -119,7 +99,6 @@ class MySqlSource extends PdoSourceAbstract
     }
 
     /**
-     * Сохранить файл оригиналов
      * @param $phrases
      * @return boolean
      */
@@ -183,7 +162,7 @@ class MySqlSource extends PdoSourceAbstract
     public function isInstalled()
     {
         return $this->getPdo()->query(
-            'select COUNT(*) from information_schema.tables where table_schema=DATABASE() AND TABLE_NAME="sli_setting"'
+            'select COUNT(*) from information_schema.tables where table_schema=DATABASE() AND TABLE_NAME="sli_original"'
         )->fetchColumn() ? true : false;
     }
 
@@ -192,24 +171,7 @@ class MySqlSource extends PdoSourceAbstract
      */
     public function install()
     {
-        $sqlCommands = explode(';', trim(file_get_contents(
-            __DIR__ .
-            DIRECTORY_SEPARATOR .
-            'data' .
-            DIRECTORY_SEPARATOR .
-            'mysql' .
-            DIRECTORY_SEPARATOR .
-            'install.sql'
-        )));
-
-        foreach ($sqlCommands as $sqlCommand) {
-            if (!$sqlCommand) {
-                continue;
-            }
-            $this->getPdo()->exec($sqlCommand);
-        }
-
-        return true;
+        return $this->executeSqlFile('install.sql');
     }
 
     protected function getMigrationDataDir()
