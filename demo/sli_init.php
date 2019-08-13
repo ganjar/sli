@@ -2,6 +2,9 @@
 
 use SLI\Configurator;
 use SLI\Language\Language;
+use SLI\PreProcessors\HtmlCommentPreProcessor;
+use SLI\PreProcessors\IgnoreHtmlTagsPreProcessor;
+use SLI\PreProcessors\SliIgnoreTagPreProcessor;
 use SLI\Processors\HardReplaceProcessor;
 use SLI\Processors\HtmlAttributesProcessor;
 use SLI\Processors\HtmlLinkProcessor;
@@ -16,8 +19,7 @@ $sli = new SLI($configurator);
 //Задаем источник переводов
 
 //From MySQL
-/*$connection = new PDO("mysql:dbname=sli;host=localhost", 'root', 'root');
-$connection->exec('SET NAMES utf8');
+/*$connection = new PDO("mysql:dbname=sli;host=localhost;charset=utf8", 'root', 'root');
 $sliTranslateSource = new MySqlSource($connection);
 if (!$sliTranslateSource->isInstalled()) {
     $sliTranslateSource->install();
@@ -35,10 +37,13 @@ $language = new Language();
 $language->setAlias('uk');
 $configurator->setLanguage($language);
 
+//PreProcessors
+$configurator->addPreProcessor(new IgnoreHtmlTagsPreProcessor(['style', 'script']));
+$configurator->addPreProcessor(new HtmlCommentPreProcessor());
+$configurator->addPreProcessor(new SliIgnoreTagPreProcessor());
 
 //Добавляем обработчик буфера. В данном примере добавляем парсер html
 $sliHtmlTagProcessor = new HtmlTagProcessor();
-$sliHtmlTagProcessor->setIgnoreTags(['style', 'script']);
 $configurator->addProcessor($sliHtmlTagProcessor);
 
 //Добавляем парсер html аттрибутов
