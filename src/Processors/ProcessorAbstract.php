@@ -12,11 +12,6 @@ use SLI\Translate;
 abstract class ProcessorAbstract implements ProcessorInterface
 {
     /**
-     * @var null|\Closure
-     */
-    protected $missingTranslationCallback;
-
-    /**
      * @var Translate
      */
     protected $translate;

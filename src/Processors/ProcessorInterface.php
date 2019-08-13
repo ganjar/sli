@@ -23,7 +23,8 @@ interface ProcessorInterface
 
     /**
      * @param string $buffer
+     * @param string $cleanBuffer
      * @return string
      */
-    public function process($buffer);
+    public function process($buffer, $cleanBuffer);
 }

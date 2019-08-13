@@ -17,10 +17,11 @@ class HtmlLinkProcessor extends ProcessorAbstract
 {
     /**
      * @param string $buffer
+     * @param string $cleanBuffer
      * @return string
      * @throws \SLI\Exceptions\SliException
      */
-    public function process($buffer)
+    public function process($buffer, $cleanBuffer)
     {
         //Заменяем ссылки на картинки и файлы что бы не локализировать
         //todo - set excepted extensions (or set allow extension!)

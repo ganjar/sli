@@ -67,16 +67,21 @@ class SLI
 
     /**
      * Run all processors by content
-     * @param $content
+     * @param $buffer
      * @return string
      */
-    public function process($content)
+    public function process($buffer)
     {
-        foreach ($this->getConfigurator()->getProcessors() as $processor) {
-            $content = $processor->process($content);
+        $cleanBuffer = $buffer;
+        foreach ($this->getConfigurator()->getPreProcessors() as $preProcessor) {
+            $cleanBuffer = $preProcessor->process($cleanBuffer);
         }
 
-        return $content;
+        foreach ($this->getConfigurator()->getProcessors() as $processor) {
+            $buffer = $processor->process($buffer, $cleanBuffer);
+        }
+
+        return $buffer;
     }
 
     /**

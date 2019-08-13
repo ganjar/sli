@@ -120,7 +120,7 @@ class Translate
     }
 
     /**
-     * todo - это надо учитывать при сохранении перевода. Переделать на Pre/PostProcessors
+     * todo - Переделать на translate Pre & PostProcessors
      * Оработка текста перед
      * запросом в источник переводов
      * @var $text - string

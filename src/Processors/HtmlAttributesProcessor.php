@@ -11,11 +11,9 @@ namespace SLI\Processors;
  * Class HtmlAttributesProcessor
  * @package SLI\Processors
  */
-class HtmlAttributesProcessor extends ProcessorAbstract
+class HtmlAttributesProcessor extends AbstractHtmlProcessor
 {
-
     protected $allowAttributes = [];
-
 
     /**
      * Allow html attributes translation
@@ -35,12 +33,25 @@ class HtmlAttributesProcessor extends ProcessorAbstract
     }
 
     /**
-     * @param string $buffer
+     * Get RegEx for parse HTML and get all phrases for translate
      * @return string
      */
-    public function process($buffer)
+    public function getFindPhrasesRegex()
     {
-        // TODO: Implement process() method.
-        return $buffer;
+        $allowAttributes = $this->getAllowAttributes();
+        $regexp = [];
+
+        foreach ($allowAttributes as $attr) {
+            $attr = preg_quote($attr);
+            $regexp[] = '(?:' . $attr . ')';
+        }
+
+        return '#
+          (?:\s+(?:' . implode('|', $regexp) . ')\s*=\s*("|\'))
+                (?:(?:&nbsp;)|\s)*
+            		([^\s<][^<]+)
+                (?:(?:&nbsp;)|\s)*
+  		  (?:(?!\\\)\\1)
+        #Uuxsi';
     }
 }

@@ -11,6 +11,7 @@ namespace SLI;
 use function is_null;
 use SLI\Exceptions\SliConfiguratorException;
 use SLI\Language\LanguageInterface;
+use SLI\PreProcessors\PreProcessorInterface;
 use SLI\Processors\ProcessorInterface;
 use SLI\Sources\SourceInterface;
 
@@ -34,6 +35,11 @@ class Configurator
      * @var Buffer
      */
     protected $buffer;
+
+    /**
+     * @var PreProcessorInterface[]
+     */
+    protected $preProcessors = [];
 
     /**
      * @var ProcessorInterface[]
@@ -98,6 +104,34 @@ class Configurator
     {
         $processor->setTranslate($this->getTranslate());
         $this->processors[] = $processor;
+    }
+
+    /**
+     * @return PreProcessorInterface[]
+     */
+    public function getPreProcessors()
+    {
+        return $this->preProcessors;
+    }
+
+    /**
+     * @param PreProcessorInterface[] $preProcessors
+     * @return $this
+     */
+    public function setPreProcessors($preProcessors)
+    {
+        $this->preProcessors = $preProcessors;
+
+        return $this;
+    }
+
+    /**
+     * Add translate processor
+     * @param PreProcessorInterface $preProcessor
+     */
+    public function addPreProcessor(PreProcessorInterface $preProcessor)
+    {
+        $this->preProcessors[] = $preProcessor;
     }
 
     /**
