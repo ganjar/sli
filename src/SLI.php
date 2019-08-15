@@ -7,9 +7,11 @@
 
 namespace SLI;
 
+use SLI\Buffer\Buffer;
 use SLI\Buffer\BufferTranslate;
 use SLI\Exceptions\BufferTranslateNotDefinedException;
 use SLI\Exceptions\TranslateNotDefinedException;
+use SLI\Translate\Language\LanguageInterface;
 use SLI\Translate\Translate;
 
 /**
@@ -53,6 +55,15 @@ class SLI
     }
 
     /**
+     * @return Buffer
+     * @throws BufferTranslateNotDefinedException
+     */
+    public function getBuffer()
+    {
+        return $this->getBufferTranslate()->getBuffer();
+    }
+
+    /**
      * @param Translate $translate
      * @return $this
      */
@@ -74,5 +85,23 @@ class SLI
         }
 
         return $this->translate;
+    }
+
+    /**
+     * @return LanguageInterface
+     * @throws TranslateNotDefinedException
+     */
+    public function getLanguage()
+    {
+        return $this->getTranslate()->getLanguage();
+    }
+
+    /**
+     * @return Event
+     * @throws TranslateNotDefinedException
+     */
+    public function getEvent()
+    {
+        return $this->getTranslate()->getEvent();
     }
 }

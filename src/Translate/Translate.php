@@ -12,7 +12,9 @@ namespace SLI\Translate;
 use SLI\Event;
 use SLI\Exceptions\SliException;
 use SLI\Translate\Language\LanguageInterface;
+use SLI\Translate\OriginalProcessors\OriginalProcessorInterface;
 use SLI\Translate\Sources\SourceInterface;
+use SLI\Translate\TranslateProcessors\TranslateProcessorInterface;
 
 /**
  * Class Translate
@@ -34,6 +36,16 @@ class Translate
      * @var Event
      */
     protected $event;
+
+    /**
+     * @var OriginalProcessorInterface[]
+     */
+    protected $originalProcessors = [];
+
+    /**
+     * @var TranslateProcessorInterface[]
+     */
+    protected $translateProcessors = [];
 
     /**
      * Translate constructor.
@@ -73,6 +85,60 @@ class Translate
     }
 
     /**
+     * @return OriginalProcessorInterface[]
+     */
+    public function getOriginalProcessors()
+    {
+        return $this->originalProcessors;
+    }
+
+    /**
+     * @param OriginalProcessorInterface[] $originalProcessors
+     * @return $this
+     */
+    public function setOriginalProcessors($originalProcessors)
+    {
+        $this->originalProcessors = $originalProcessors;
+
+        return $this;
+    }
+
+    /**
+     * @param OriginalProcessorInterface $originalProcessor
+     */
+    public function addOriginalProcessor(OriginalProcessorInterface $originalProcessor)
+    {
+        $this->originalProcessors[] = $originalProcessor;
+    }
+
+    /**
+     * @return TranslateProcessorInterface[]
+     */
+    public function getTranslateProcessors()
+    {
+        return $this->translateProcessors;
+    }
+
+    /**
+     * @param TranslateProcessorInterface[] $translateProcessors
+     * @return $this
+     */
+    public function setTranslateProcessors($translateProcessors)
+    {
+        $this->translateProcessors = $translateProcessors;
+
+        return $this;
+    }
+
+    /**
+     * @param TranslateProcessorInterface $translateProcessor
+     */
+    public function addTranslateProcessor(TranslateProcessorInterface $translateProcessor)
+    {
+        $this->translateProcessors[] = $translateProcessor;
+    }
+
+    /**
      * @param array         $phrases
      * @param \Closure|null $missingTranslationCallback - ($phrase, SLI $sli)
      * @return array
@@ -81,8 +147,7 @@ class Translate
     {
         $searchPhrases = $originalPhrases = [];
         foreach ($phrases as $phrase) {
-            $searchPhrases[$phrase] = $this->originalPreProcessor($phrase);
-            //Массив с обратным индексом оригинал => текст для поиска в источнике
+            $searchPhrases[$phrase] = $this->originalProcess($phrase);
             $originalPhrases[$searchPhrases[$phrase]] = $phrase;
         }
 
@@ -91,8 +156,8 @@ class Translate
             $this->getLanguage()
         );
         foreach ($translates as $searchPhrase => &$translate) {
-            if ($translate) {
-                $translate = $this->translatePostProcessor($originalPhrases[$searchPhrase], $translate);
+            if ($translate !== '') {
+                $translate = $this->translateProcess($originalPhrases[$searchPhrase], $translate);
             } else {
                 $this->getEvent()->trigger(Event::EVENT_MISSING_TRANSLATION, $searchPhrase, $this);
                 if ($missingTranslationCallback) {
@@ -121,48 +186,27 @@ class Translate
     }
 
     /**
-     * todo - Переделать на translate Pre & PostProcessors
-     * Оработка текста перед
-     * запросом в источник переводов
-     * @var $text - string
+     * @param $original
      * @return string
      */
-    protected function originalPreProcessor($text)
+    protected function originalProcess($original)
     {
-        $text = preg_replace('!\d+!', '0', $text);
-        $text = preg_replace('!\s+!s', ' ', $text);
+        foreach ($this->getOriginalProcessors() as $originalProcessor) {
+            $original = $originalProcessor->process($original);
+        }
 
-        return trim($text);
+        return $original;
     }
 
     /**
-     * Обработка полученного перевода
      * @param string $original
      * @param string $translate
      * @return string
      */
-    protected function translatePostProcessor($original, $translate)
+    protected function translateProcess($original, $translate)
     {
-        //Заменяем измененные не переводимые части в значении перевода
-        preg_match_all('#(?:[\d])+#u', $original, $symbols);
-        preg_match_all('#(?:[\d])+#u', $translate, $tSymbols);
-
-        $symbols = $symbols[0];
-        $tSymbols = $tSymbols[0];
-
-        if (!empty($symbols)) {
-
-            $sPos = 0;
-            foreach ($symbols as $symbolKey => $symbol) {
-
-                $sPos = strpos($translate, $tSymbols[$symbolKey], $sPos);
-
-                if ($sPos !== false) {
-                    $translate = substr_replace($translate, $symbol, $sPos,
-                        strlen($tSymbols[$symbolKey]));
-                    $sPos += strlen($symbol);
-                }
-            }
+        foreach ($this->getTranslateProcessors() as $translateProcessor) {
+            $translate = $translateProcessor->process($original, $translate);
         }
 
         return $translate;
