@@ -18,8 +18,6 @@ class IgnoreHtmlTagsPreProcessor extends PreProcessorAbstract
      */
     protected $ignoreTags = [];
 
-    const HTML_VAR_PATTERN = '<!--SLI::%s-->';
-
     /**
      * IgnoreHtmlTagsPreProcessor constructor.
      * @param array $ignoreTags
@@ -66,22 +64,5 @@ class IgnoreHtmlTagsPreProcessor extends PreProcessorAbstract
         $content = preg_replace('#' . implode('|', $regexp) . '#Usi', '', $content);
 
         return $content;
-    }
-
-    /**
-     * @return string
-     * @internal param bool $print
-     */
-    public function ignoreStart()
-    {
-        return sprintf(self::HTML_VAR_PATTERN, 'ignore');
-    }
-
-    /**
-     * @return string
-     */
-    public function ignoreEnd()
-    {
-        return sprintf(self::HTML_VAR_PATTERN, 'endIgnore');
     }
 }
