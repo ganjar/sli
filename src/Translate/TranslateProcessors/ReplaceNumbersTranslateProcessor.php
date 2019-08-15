@@ -36,8 +36,7 @@ class ReplaceNumbersTranslateProcessor implements TranslateProcessorInterface
                 $sPos = strpos($translate, $tSymbols[$symbolKey], $sPos);
 
                 if ($sPos !== false) {
-                    $translate = substr_replace($translate, $symbol, $sPos,
-                        strlen($tSymbols[$symbolKey]));
+                    $translate = substr_replace($translate, $symbol, $sPos, strlen($tSymbols[$symbolKey]));
                     $sPos += strlen($symbol);
                 }
             }
