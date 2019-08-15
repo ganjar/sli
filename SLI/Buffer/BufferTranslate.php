@@ -5,9 +5,8 @@
  * @link   http://sli.su/
  */
 
-namespace SLI;
+namespace SLI\Buffer;
 
-use SLI\Buffer\Buffer;
 use SLI\Buffer\PreProcessors\PreProcessorInterface;
 use SLI\Buffer\Processors\ProcessorInterface;
 use SLI\Exceptions\TranslateNotDefinedException;

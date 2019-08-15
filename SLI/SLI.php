@@ -7,6 +7,7 @@
 
 namespace SLI;
 
+use SLI\Buffer\BufferTranslate;
 use SLI\Exceptions\BufferTranslateNotDefinedException;
 use SLI\Exceptions\TranslateNotDefinedException;
 use SLI\Translate\Translate;
