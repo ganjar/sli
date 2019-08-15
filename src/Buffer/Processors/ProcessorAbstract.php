@@ -3,7 +3,7 @@
 namespace SLI\Buffer\Processors;
 
 use SLI\Exceptions\SliException;
-use SLI\Translate;
+use SLI\Translate\Translate;
 
 /**
  * Interface ProcessorInterface

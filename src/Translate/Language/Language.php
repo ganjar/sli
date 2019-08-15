@@ -5,7 +5,7 @@
  * @link   http://sli.su/
  */
 
-namespace SLI\Language;
+namespace SLI\Translate\Language;
 
 /**
  * @author GANJAR (Bohdan Rykhal)

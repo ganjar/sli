@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SLI\Sources\Exceptions;
+namespace SLI\Translate\Sources\Exceptions;
 
 
 use SLI\Exceptions\SliException;

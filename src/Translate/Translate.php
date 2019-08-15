@@ -6,12 +6,13 @@
  */
 
 
-namespace SLI;
+namespace SLI\Translate;
 
 
+use SLI\Event;
 use SLI\Exceptions\SliException;
-use SLI\Language\LanguageInterface;
-use SLI\Sources\SourceInterface;
+use SLI\Translate\Language\LanguageInterface;
+use SLI\Translate\Sources\SourceInterface;
 
 /**
  * Class Translate

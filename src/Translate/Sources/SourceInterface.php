@@ -1,8 +1,8 @@
 <?php
 
-namespace SLI\Sources;
+namespace SLI\Translate\Sources;
 
-use SLI\Language\LanguageInterface;
+use SLI\Translate\Language\LanguageInterface;
 
 interface SourceInterface
 {

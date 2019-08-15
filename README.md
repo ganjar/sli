@@ -61,7 +61,7 @@ $sli->addProcessor($hardReplaceProcessor);
 //$sli->setLogger($monolog);
 
 //events
-$sli->on(SLI::EVENT_MISSING_TRANSLATION, function (SLI $sli, $phrase) {
+$sli->on(\SLI\Event::EVENT_MISSING_TRANSLATION, function (SLI $sli, $phrase) {
     echo 'Untranslated:' . $phrase;
     echo 'Source:' . get_class($sli->getSource());
 });
@@ -85,3 +85,53 @@ $sli->getBuffer()->add('Hello to ;)');
 //Быстрый перевод
 echo $sli->translate('<b>Hello word</b>');
 ```
+
+
+
+    /**
+     * todo - Переделать на translate Pre & PostProcessors
+     * Оработка текста перед
+     * запросом в источник переводов
+     * @var $text - string
+     * @return string
+     */
+    protected function originalPreProcessor($text)
+    {
+        $text = preg_replace('!\d+!', '0', $text);
+        $text = preg_replace('!\s+!s', ' ', $text);
+
+        return trim($text);
+    }
+
+    /**
+     * Обработка полученного перевода
+     * @param string $original
+     * @param string $translate
+     * @return string
+     */
+    protected function translatePostProcessor($original, $translate)
+    {
+        //Заменяем измененные не переводимые части в значении перевода
+        preg_match_all('#(?:[\d])+#u', $original, $symbols);
+        preg_match_all('#(?:[\d])+#u', $translate, $tSymbols);
+
+        $symbols = $symbols[0];
+        $tSymbols = $tSymbols[0];
+
+        if (!empty($symbols)) {
+
+            $sPos = 0;
+            foreach ($symbols as $symbolKey => $symbol) {
+
+                $sPos = strpos($translate, $tSymbols[$symbolKey], $sPos);
+
+                if ($sPos !== false) {
+                    $translate = substr_replace($translate, $symbol, $sPos,
+                        strlen($tSymbols[$symbolKey]));
+                    $sPos += strlen($symbol);
+                }
+            }
+        }
+
+        return $translate;
+    }

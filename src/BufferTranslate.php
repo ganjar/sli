@@ -11,6 +11,7 @@ use SLI\Buffer\Buffer;
 use SLI\Buffer\PreProcessors\PreProcessorInterface;
 use SLI\Buffer\Processors\ProcessorInterface;
 use SLI\Exceptions\TranslateNotDefinedException;
+use SLI\Translate\Translate;
 
 /**
  * Class BufferTranslate

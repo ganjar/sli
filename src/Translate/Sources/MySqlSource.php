@@ -5,11 +5,11 @@
  * @link   http://sli.su/
  */
 
-namespace SLI\Sources;
+namespace SLI\Translate\Sources;
 
 use PDO;
 use SLI\Exceptions\SliException;
-use SLI\Language\LanguageInterface;
+use SLI\Translate\Language\LanguageInterface;
 
 /**
  * Class MySqlSource

@@ -1,15 +1,15 @@
 <?php
 
-namespace SLI\Sources;
+namespace SLI\Translate\Sources;
 
 use function explode;
 use function file;
 use function file_exists;
 use function is_null;
 use function is_readable;
-use SLI\Language\LanguageInterface;
-use SLI\Sources\Exceptions\FileNotFoundException;
-use SLI\Sources\Exceptions\FileReadPermissionsException;
+use SLI\Translate\Language\LanguageInterface;
+use SLI\Translate\Sources\Exceptions\FileNotFoundException;
+use SLI\Translate\Sources\Exceptions\FileReadPermissionsException;
 
 class FileSource extends SourceAbstract
 {

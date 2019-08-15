@@ -1,6 +1,6 @@
 <?php
 
-namespace SLI\Sources;
+namespace SLI\Translate\Sources;
 
 abstract class PdoSourceAbstract implements SourceInterface
 {

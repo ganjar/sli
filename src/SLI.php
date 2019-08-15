@@ -9,6 +9,7 @@ namespace SLI;
 
 use SLI\Exceptions\BufferTranslateNotDefinedException;
 use SLI\Exceptions\TranslateNotDefinedException;
+use SLI\Translate\Translate;
 
 /**
  * Class SLI
