@@ -14,6 +14,8 @@ namespace SLI;
  */
 class Event
 {
+    const EVENT_MISSING_TRANSLATION = 'missing_translation';
+
     /**
      * @var array
      */

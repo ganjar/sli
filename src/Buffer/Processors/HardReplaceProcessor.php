@@ -5,14 +5,14 @@
  * @link   http://sli.su/
  */
 
-namespace SLI\Processors;
+namespace SLI\Buffer\Processors;
 
 /**
  * This processor only replace all occurrences.
  * For example: you may replace image url from /logo.png to /ru_logo.png
  * Case sensitive search!
  * Class HardReplaceProcessor
- * @package SLI\Processors
+ * @package SLI\Buffer\Processors
  */
 class HardReplaceProcessor extends ProcessorAbstract
 {

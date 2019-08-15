@@ -6,11 +6,10 @@
  */
 namespace SLI\Exceptions;
 
-
 /**
  * @author GANJAR (Bohdan Rykhal)
  */
-class SliConfiguratorException extends SliException
+class TranslateNotDefinedException extends SliException
 {
 
 }

@@ -5,11 +5,11 @@
  * @link   http://sli.su/
  */
 
-namespace SLI\Processors;
+namespace SLI\Buffer\Processors;
 
 /**
  * Class HtmlAttributesProcessor
- * @package SLI\Processors
+ * @package SLI\Buffer\Processors
  */
 class HtmlAttributesProcessor extends AbstractHtmlProcessor
 {

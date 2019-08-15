@@ -5,7 +5,7 @@
  * @link   http://sli.su/
  */
 
-namespace SLI;
+namespace SLI\Buffer;
 
 /**
  * Class Buffer

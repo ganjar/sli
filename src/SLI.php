@@ -7,97 +7,70 @@
 
 namespace SLI;
 
+use SLI\Exceptions\BufferTranslateNotDefinedException;
+use SLI\Exceptions\TranslateNotDefinedException;
+
 /**
  * Class SLI
  * @package SLI
  */
 class SLI
 {
-    const EVENT_MISSING_TRANSLATION = 'missing_translation';
+    /**
+     * @var Translate
+     */
+    protected $translate;
 
     /**
-     * @var Configurator
+     * @var BufferTranslate
      */
-    protected $configurator;
+    protected $bufferTranslate;
 
     /**
-     * SLI constructor.
-     * @param Configurator $configurator
+     * @param BufferTranslate $bufferTranslate
+     * @return $this
      */
-    public function __construct(Configurator $configurator)
+    public function setBufferTranslate(BufferTranslate $bufferTranslate)
     {
-        $this->configurator = $configurator;
+        $this->bufferTranslate = $bufferTranslate;
+
+        return $this;
     }
 
     /**
-     * @return Configurator
+     * @return BufferTranslate
+     * @throws BufferTranslateNotDefinedException
      */
-    public function getConfigurator()
+    public function getBufferTranslate()
     {
-        return $this->configurator;
-    }
-
-    /**
-     * Process all buffers and clear stack
-     * @param $content
-     * @return mixed
-     * @throws Exceptions\SliConfiguratorException
-     */
-    public function processAllBuffers($content)
-    {
-        $buffers = $this->getConfigurator()->getBuffer()->getBuffers();
-
-        foreach ($buffers as $bufferKey => $buffer) {
-
-            if (!$this->getConfigurator()->getLanguage()->getIsOriginal()) {
-                $buffer = $this->process($buffer);
-            }
-
-            $content = str_replace(
-                $this->getConfigurator()->getBuffer()->getBufferKey($bufferKey),
-                $buffer,
-                $content
-            );
+        if (!$this->bufferTranslate) {
+            throw new BufferTranslateNotDefinedException('BufferTranslate is not defined');
         }
 
-        $this->getConfigurator()->getBuffer()->clear();
-
-        return $content;
+        return $this->bufferTranslate;
     }
 
     /**
-     * Run all processors by content
-     * @param $buffer
-     * @return string
+     * @param Translate $translate
+     * @return $this
      */
-    public function process($buffer)
+    public function setTranslate(Translate $translate)
     {
-        $cleanBuffer = $buffer;
-        foreach ($this->getConfigurator()->getPreProcessors() as $preProcessor) {
-            $cleanBuffer = $preProcessor->process($cleanBuffer);
-        }
+        $this->translate = $translate;
 
-        foreach ($this->getConfigurator()->getProcessors() as $processor) {
-            $buffer = $processor->process($buffer, $cleanBuffer);
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @return Buffer
-     */
-    public function getBuffer()
-    {
-        return $this->getConfigurator()->getBuffer();
+        return $this;
     }
 
     /**
      * @return Translate
-     * @throws Exceptions\SliConfiguratorException
+     * @throws TranslateNotDefinedException
      */
     public function getTranslate()
     {
-        return $this->getConfigurator()->getTranslate();
+        if (!$this->translate) {
+            throw new TranslateNotDefinedException('Translate is not defined');
+        }
+
+        return $this->translate;
     }
 }

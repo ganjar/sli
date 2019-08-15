@@ -93,7 +93,7 @@ class Translate
             if ($translate) {
                 $translate = $this->translatePostProcessor($originalPhrases[$searchPhrase], $translate);
             } else {
-                $this->getEvent()->trigger(SLI::EVENT_MISSING_TRANSLATION, $searchPhrase, $this);
+                $this->getEvent()->trigger(Event::EVENT_MISSING_TRANSLATION, $searchPhrase, $this);
                 if ($missingTranslationCallback) {
                     $translate = $missingTranslationCallback($searchPhrase, $this);
                 }

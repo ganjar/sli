@@ -5,7 +5,7 @@
  * @link   http://sli.su/
  */
 
-namespace SLI\PreProcessors;
+namespace SLI\Buffer\PreProcessors;
 
 /**
  * Class SliIgnoreTagPreProcessor

@@ -1,12 +1,12 @@
 <?php
 
-namespace SLI\Processors;
+namespace SLI\Buffer\Processors;
 
 use SLI\Translate;
 
 /**
  * Interface ProcessorInterface
- * @package SLI\Processors
+ * @package SLI\Buffer\Processors
  */
 interface ProcessorInterface
 {

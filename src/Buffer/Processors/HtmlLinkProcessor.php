@@ -5,13 +5,13 @@
  * @link   http://sli.su/
  */
 
-namespace SLI\Processors;
+namespace SLI\Buffer\Processors;
 
 /**
  * You may use this processor if you want to store information about language in URL.
  * Processor replace all links (/about/) to links with current language (/ru/about/)
  * Class HtmlLinkProcessor
- * @package SLI\Processors
+ * @package SLI\Buffer\Processors
  */
 class HtmlLinkProcessor extends ProcessorAbstract
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace SLI\PreProcessors;
+namespace SLI\Buffer\PreProcessors;
 
 /**
  * Interface PreProcessorInterface
