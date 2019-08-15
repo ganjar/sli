@@ -83,7 +83,7 @@ class FileSource extends SourceAbstract
         $lines = file($this->getPath());
         foreach ($lines as $line) {
             $lineParts = explode($this->delimiter, $line);
-            $translates[$lineParts[0]] = $lineParts[1];
+            $translates[$lineParts[0]] = isset($lineParts[1]) ? $lineParts[1] : '';
         }
 
         return $translates;
