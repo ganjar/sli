@@ -37,7 +37,16 @@ class BufferTranslate
      * @var ProcessorInterface[]
      */
     protected $processors = [];
-    
+
+    /**
+     * BufferTranslate constructor.
+     * @param Translate $translate
+     */
+    public function __construct(Translate $translate)
+    {
+        $this->translate = $translate;
+    }
+
     /**
      * @return ProcessorInterface[]
      */
