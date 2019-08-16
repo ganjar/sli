@@ -46,7 +46,7 @@ class HtmlAttributesProcessor extends AbstractHtmlProcessor
             $regexp[] = '(?:' . $attr . ')';
         }
 
-        //test regex https://regex101.com/r/aOX8Fo/1
+        //test regex https://regex101.com/r/aOX8Fo/3
         return '$
           (?:<[^>]+\s+(?:' . implode('|', $regexp) . ')\s*=\s*("|\'))   #Attributes in tag
                 (?:(?:&\#?[a-z0-9]{1,7};)|[^\w<])*                           #Html entities and untranslated symbols 
