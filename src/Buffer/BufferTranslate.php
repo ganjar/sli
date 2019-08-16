@@ -151,11 +151,7 @@ class BufferTranslate
         $buffers = $this->getBuffer()->getBuffers();
 
         foreach ($buffers as $bufferKey => $buffer) {
-
-            if (!$this->getTranslate()->getLanguage()->getIsOriginal()) {
-                $buffer = $this->translateBuffer($buffer);
-            }
-
+            $buffer = $this->translateBuffer($buffer);
             $content = str_replace(
                 $this->getBuffer()->getBufferKey($bufferKey),
                 $buffer,
