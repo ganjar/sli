@@ -19,13 +19,13 @@ class HtmlTagProcessor extends AbstractHtmlProcessor
      */
     public function getFindPhrasesRegex()
     {
-        //test regex https://regex101.com/r/4rYAGP/4
-        return '#
-          (?:>|\A)
-                (?:(?:&nbsp;)|\s)*
-            		([^\s<][^<]+)
-                (?:(?:&nbsp;)|\s)*
-  		  (?:<|\Z)
-        #Uxusi';
+        //test regex https://regex101.com/r/khDShg/1
+        return '$
+          (?:>|\A)                                      #Close tag symbol or start of string
+                (?:(?:&\#?[a-z0-9]{1,7};)|[^\w<])*      #Html entities and untranslated symbols 
+            		(?<original>[\w][^<>]+)             #Translate content
+                (?:(?:&\#?[a-z0-9]{1,7};)|\s)*          #Html entities and spaces
+  		  (?:<|\Z)                                      #Open tag symbol or end of string
+        $Uxusi';
     }
 }

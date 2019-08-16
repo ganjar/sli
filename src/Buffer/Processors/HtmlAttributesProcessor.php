@@ -46,12 +46,13 @@ class HtmlAttributesProcessor extends AbstractHtmlProcessor
             $regexp[] = '(?:' . $attr . ')';
         }
 
-        return '#
-          (?:\s+(?:' . implode('|', $regexp) . ')\s*=\s*("|\'))
-                (?:(?:&nbsp;)|\s)*
-            		([^\s<][^<]+)
-                (?:(?:&nbsp;)|\s)*
-  		  (?:(?!\\\)\\1)
-        #Uuxsi';
+        //test regex https://regex101.com/r/aOX8Fo/1
+        return '$
+          (?:<[^>]+\s+(?:' . implode('|', $regexp) . ')\s*=\s*("|\'))   #Attributes in tag
+                (?:(?:&\#?[a-z0-9]{1,7};)|[^\w<])*                           #Html entities and untranslated symbols 
+            		(?<original>[\w][^<>]+)                                  #Translate content
+                (?:(?:&\#?[a-z0-9]{1,7};)|\s)*                               #Html entities and spaces
+  		  (?:(?!\\\)\\1)                                                     #Close attribute quote
+        $Uuxsi';
     }
 }

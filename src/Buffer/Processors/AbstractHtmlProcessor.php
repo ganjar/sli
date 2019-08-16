@@ -24,7 +24,7 @@ abstract class AbstractHtmlProcessor extends ProcessorAbstract
         preg_match_all($this->getFindPhrasesRegex(), $cleanBuffer, $match);
         $originalData = [
             'match'    => $match[0],
-            'original' => $match[1],
+            'original' => $match['original'],
         ];
 
         $pos = 0;
