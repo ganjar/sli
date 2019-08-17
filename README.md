@@ -11,127 +11,86 @@ $ composer require ganjar/sli
 ```php
 <?php
 
-use SLI\Language\Language;
-use SLI\Processors\HardReplaceProcessor;
-use SLI\Processors\HtmlAttributesProcessor;
-use SLI\Processors\HtmlLinkProcessor;
-use SLI\Processors\HtmlTagProcessor;
-use SLI\SLI;
-use SLI\SLIEvents;
-use SLI\sources\PdoSource;
 
-$sli = new SLI();
 
-//Задаем источник переводов
+//Set translation source - MySQL
 $connection = new PDO("mysql:dbname=test;host=localhost", 'root', 'root');
-$sliTranslateSource = new PdoSource($connection);
+$sliTranslateSource = new \SLI\Translate\Sources\MySqlSource($connection);
 if (!$sliTranslateSource->isInstalled()) {
     $sliTranslateSource->install();
 }
-$sli->setSource($sliTranslateSource);
 
-//Задаем обработчик выбора языка
-//todo - решить как определять язык и возможность кастомизации (COOKIE, URL, etc)
-//todo - вынести просто в SLIHelper определение языка на url
-$language = new Language();
-$language->setAlias('ua');
-$sli->setLanguage($language);
+//Set translation source - from file with || delimiter (original||translate)
+//$fileSource = new \SLI\Translate\Sources\FileSource(__DIR__ . '/lng/ru.txt', '||');
 
+//Set language
+$language = new \SLI\Translate\Language\Language();
+$language->setAlias('en');
+$language->setIsOriginal(true);
 
-//Добавляем обработчик буфера. В данном примере добавляем парсер html
-$sliHtmlTagProcessor = new HtmlTagProcessor();
-$sliHtmlTagProcessor->setIgnoreTags(['style', 'script']);
-$sli->addProcessor($sliHtmlTagProcessor);
+//Make Translate instance
+$translate = new \SLI\Translate\Translate(
+    $language,
+    $fileSource,
+    new Event()
+);
+$translate->addOriginalProcessor(new TrimSpacesOriginalProcessor());
 
-//Добавляем парсер html аттрибутов
+//BufferTranslate - class for parse and translate phrases in content
+$bufferTranslate = new BufferTranslate($translate);
+
+//PreProcessors - hide some content parts from buffer processors
+$bufferTranslate->addPreProcessor(new IgnoreHtmlTagsPreProcessor(['style', 'script']));
+$bufferTranslate->addPreProcessor(new HtmlCommentPreProcessor());
+$bufferTranslate->addPreProcessor(new SliIgnoreTagPreProcessor());
+
+//Add buffer processor for parse content in HTML tags
+$bufferTranslate->addProcessor(new HtmlTagProcessor());
+
+//Add buffer processor for parse phrases in custom tags
+//$bufferTranslate->addProcessor(new CustomTagProcessor('[[', ']]'));
+
+//Add processor for translate html attributes content
 $sliHtmlAttributesProcessor = new HtmlAttributesProcessor();
-$sliHtmlAttributesProcessor->setAllowAttributes(['title', 'alt']);
-$sli->addProcessor($sliHtmlAttributesProcessor);
+$sliHtmlAttributesProcessor->setAllowAttributes(['title', 'alt', 'rel']);
+$bufferTranslate->addProcessor($sliHtmlAttributesProcessor);
 
-//Добавляем обработчик буфера для замены в ссылках языковой приставки
-$linkProcessor = new HtmlLinkProcessor();
-$sli->addProcessor($linkProcessor);
+//Add processor for replace language in URLs
+$bufferTranslate->addProcessor(new HtmlLinkProcessor());
 
-//Добавляем жесткую замену текста
-$hardReplaceProcessor = new HardReplaceProcessor();
-$hardReplaceProcessor->addReplacement('привет', 'hello');
-$sli->addProcessor($hardReplaceProcessor);
-
-//Далее вы можете направить все уведомления об отсутствии переводов и тд в логер (PSR3)
-//$sli->setLogger($monolog);
+$sli = new SLI();
+$sli->setTranslate($translate);
+$sli->setBufferTranslate($bufferTranslate);
 
 //events
-$sli->on(\SLI\Event::EVENT_MISSING_TRANSLATION, function (SLI $sli, $phrase) {
-    echo 'Untranslated:' . $phrase;
-    echo 'Source:' . get_class($sli->getSource());
+$sli->getEvent()->on(Event::EVENT_MISSING_TRANSLATION, function ($phrase, \SLI\Translate\Translate $translate) {
+    //$translate->getSource()->saveToTranslateQueue($phrase);
 });
-//TODO - add events
-/*$sli->on(SLI::EVENT_BEFORE_BUFFERING, function(){});
-$sli->on(SLI::EVENT_BEFORE_END_BUFFERING, function(){});
-$sli->on(SLI::EVENT_BEFORE_TRANSLATE_BUFFER, function($buffer){});
-$sli->on(SLI::EVENT_AFTER_TRANSLATE_BUFFER, function($buffer){});
-$sli->on(SLI::EVENT_CATCH_NON_TRANSLATED_TEXT, function($text){});*/
 
-$sli->getBuffer()->buffering(function(){
+//Use buffers
+
+/*ob_start();
+
+echo $sli->getBuffer()->buffering(function(){
     echo '<b>Hello word</b>';
 });
+
+//start/end
 $sli->getBuffer()->start();
-
 echo '<b>Hello word</b>';
-
 $sli->getBuffer()->end();
-$sli->getBuffer()->add('Hello to ;)');
 
-//Быстрый перевод
-echo $sli->translate('<b>Hello word</b>');
-```
+//simple add
+echo $sli->getBuffer()->add('Hello to ;)');
+
+$resultHtml = ob_get_clean();
+
+//replace all buffers id in result html
+echo $sli->getBufferTranslate()->translateAllAndReplaceInSource($resultHtml);*/
 
 
+//Fast translate
+//echo $sli->getTranslate()->translate('Hello word');
 
-    /**
-     * todo - Переделать на translate Pre & PostProcessors
-     * Оработка текста перед
-     * запросом в источник переводов
-     * @var $text - string
-     * @return string
-     */
-    protected function originalPreProcessor($text)
-    {
-        $text = preg_replace('!\d+!', '0', $text);
-        $text = preg_replace('!\s+!s', ' ', $text);
 
-        return trim($text);
-    }
-
-    /**
-     * Обработка полученного перевода
-     * @param string $original
-     * @param string $translate
-     * @return string
-     */
-    protected function translatePostProcessor($original, $translate)
-    {
-        //Заменяем измененные не переводимые части в значении перевода
-        preg_match_all('#(?:[\d])+#u', $original, $symbols);
-        preg_match_all('#(?:[\d])+#u', $translate, $tSymbols);
-
-        $symbols = $symbols[0];
-        $tSymbols = $tSymbols[0];
-
-        if (!empty($symbols)) {
-
-            $sPos = 0;
-            foreach ($symbols as $symbolKey => $symbol) {
-
-                $sPos = strpos($translate, $tSymbols[$symbolKey], $sPos);
-
-                if ($sPos !== false) {
-                    $translate = substr_replace($translate, $symbol, $sPos,
-                        strlen($tSymbols[$symbolKey]));
-                    $sPos += strlen($symbol);
-                }
-            }
-        }
-
-        return $translate;
-    }
+return $sli;
