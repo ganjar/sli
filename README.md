@@ -11,8 +11,6 @@ $ composer require ganjar/sli
 ```php
 <?php
 
-
-
 //Set translation source - MySQL
 $connection = new PDO("mysql:dbname=test;host=localhost", 'root', 'root');
 $sliTranslateSource = new \SLI\Translate\Sources\MySqlSource($connection);
