@@ -19,13 +19,19 @@ if (!$sliTranslateSource->isInstalled()) {
     $sliTranslateSource->install();
 }
 
-//Set translation source - from file with || delimiter (original||translate)
-//$fileSource = new \SLI\Translate\Sources\FileSource(__DIR__ . '/lng/ru.txt', '||');
+//Set CSV files as a translation source. Files in dir /lng/ with "|" delimiter (original|translate)
+//$fileSource = new \SLI\Translate\Sources\CsvFileSource(__DIR__ . '/lng/', '|', 'txt');
+
+//Parse language
+$languageAlias = false;
+if (preg_match('#^/(?<language>\w{2})/#', $_SERVER['REQUEST_URI'], $parseUriMatches)) {
+    $languageAlias = $parseUriMatches['language'];
+}
 
 //Set language
 $language = new \SLI\Translate\Language\Language();
-$language->setAlias('en');
-$language->setIsOriginal(true);
+$language->setAlias($languageAlias);
+$language->setIsOriginal($languageAlias == 'en' || !$languageAlias);
 
 //Make Translate instance
 $translate = new \SLI\Translate\Translate(
@@ -95,5 +101,9 @@ echo $sli->getTranslate()->translate('Hello word');
 //Buffering all next content
 $sli->getBuffer()->start();
 
+//Fast translate
+//echo $sli->getTranslate()->translate('Hello word');
+//Save translate
+//$sli->getTranslate()->saveTranslate($language, 'Hello word', 'Привет мир');
 
 return $sli;

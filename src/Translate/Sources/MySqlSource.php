@@ -202,4 +202,14 @@ class MySqlSource extends PdoSourceAbstract
 
         return true;
     }
+
+    /**
+     * @param LanguageInterface $language
+     * @param string            $original
+     * @param string            $translate
+     */
+    public function saveTranslate(LanguageInterface $language, $original, $translate)
+    {
+        // TODO: Implement saveTranslate() method.
+    }
 }
