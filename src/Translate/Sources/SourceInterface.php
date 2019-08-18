@@ -19,4 +19,11 @@ interface SourceInterface
      * @return array
      */
     public function getTranslates(array $phrases, LanguageInterface $language);
+
+    /**
+     * @param LanguageInterface $language
+     * @param string            $original
+     * @param string            $translate
+     */
+    public function saveTranslate(LanguageInterface $language, $original, $translate);
 }

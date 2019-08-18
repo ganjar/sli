@@ -30,65 +30,69 @@ $language->setIsOriginal(true);
 $translate = new \SLI\Translate\Translate(
     $language,
     $fileSource,
-    new Event()
+    new \SLI\Event()
 );
-$translate->addOriginalProcessor(new TrimSpacesOriginalProcessor());
+$translate->addOriginalProcessor(new \SLI\Translate\OriginalProcessors\TrimSpacesOriginalProcessor());
 
 //BufferTranslate - class for parse and translate phrases in content
-$bufferTranslate = new BufferTranslate($translate);
+$bufferTranslate = new \SLI\Buffer\BufferTranslate($translate);
 
 //PreProcessors - hide some content parts from buffer processors
-$bufferTranslate->addPreProcessor(new IgnoreHtmlTagsPreProcessor(['style', 'script']));
-$bufferTranslate->addPreProcessor(new HtmlCommentPreProcessor());
-$bufferTranslate->addPreProcessor(new SliIgnoreTagPreProcessor());
+$bufferTranslate->addPreProcessor(new \SLI\Buffer\PreProcessors\IgnoreHtmlTagsPreProcessor(['style', 'script']));
+$bufferTranslate->addPreProcessor(new \SLI\Buffer\PreProcessors\HtmlCommentPreProcessor());
+$bufferTranslate->addPreProcessor(new \SLI\Buffer\PreProcessors\SliIgnoreTagPreProcessor());
 
 //Add buffer processor for parse content in HTML tags
-$bufferTranslate->addProcessor(new HtmlTagProcessor());
+$bufferTranslate->addProcessor(new \SLI\Buffer\Processors\HtmlTagProcessor());
 
 //Add buffer processor for parse phrases in custom tags
 //$bufferTranslate->addProcessor(new CustomTagProcessor('[[', ']]'));
 
 //Add processor for translate html attributes content
-$sliHtmlAttributesProcessor = new HtmlAttributesProcessor();
+$sliHtmlAttributesProcessor = new \SLI\Buffer\Processors\HtmlAttributesProcessor();
 $sliHtmlAttributesProcessor->setAllowAttributes(['title', 'alt', 'rel']);
 $bufferTranslate->addProcessor($sliHtmlAttributesProcessor);
 
 //Add processor for replace language in URLs
-$bufferTranslate->addProcessor(new HtmlLinkProcessor());
+$bufferTranslate->addProcessor(new \SLI\Buffer\Processors\HtmlLinkProcessor());
 
-$sli = new SLI();
+$sli = new \SLI\SLI();
 $sli->setTranslate($translate);
 $sli->setBufferTranslate($bufferTranslate);
 
 //events
-$sli->getEvent()->on(Event::EVENT_MISSING_TRANSLATION, function ($phrase, \SLI\Translate\Translate $translate) {
+$sli->getEvent()->on(\SLI\Event::EVENT_MISSING_TRANSLATION, function ($phrase, \SLI\Translate\Translate $translate) {
     //$translate->getSource()->saveToTranslateQueue($phrase);
 });
 
 //Use buffers
-
-/*ob_start();
-
-echo $sli->getBuffer()->buffering(function(){
-    echo '<b>Hello word</b>';
-});
+$sli->iniSourceBuffering();
 
 //start/end
 $sli->getBuffer()->start();
 echo '<b>Hello word</b>';
 $sli->getBuffer()->end();
 
-//simple add
-echo $sli->getBuffer()->add('Hello to ;)');
+//Without translate because outside buffer
+echo '<b>Without translate content</b>';
 
-$resultHtml = ob_get_clean();
+$sli->getBuffer()->start();
+echo '<b>Translated content inside buffer</b>';
+$sli->getBuffer()->end();
 
-//replace all buffers id in result html
-echo $sli->getBufferTranslate()->translateAllAndReplaceInSource($resultHtml);*/
+//simple add buffer
+echo $sli->getBuffer()->add('<b>Hello word 3</b>');
 
+//Buffering all content inside callback function
+echo $sli->getBuffer()->buffering(function () {
+    echo '<b>Hello word 4</b>';
+});
 
-//Fast translate
-//echo $sli->getTranslate()->translate('Hello word');
+//Quick translation of a specific phrase
+echo $sli->getTranslate()->translate('Hello word');
+
+//Buffering all next content
+$sli->getBuffer()->start();
 
 
 return $sli;
