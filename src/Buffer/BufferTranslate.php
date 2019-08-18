@@ -114,6 +114,7 @@ class BufferTranslate
         if (is_null($this->translate)) {
             throw new TranslateNotDefinedException('Translate object must be defined');
         }
+
         return $this->translate;
     }
 
@@ -148,15 +149,33 @@ class BufferTranslate
      */
     public function translateAllAndReplaceInSource($content)
     {
-        $buffers = $this->getBuffer()->getBuffers();
+        $i = 0;
+        //The maximum number of iterations to find the buffer identifier in other buffers
+        $maxIterations = count($this->getBuffer()->getBuffers());
 
-        foreach ($buffers as $bufferKey => $buffer) {
-            $buffer = $this->translateBuffer($buffer);
-            $content = str_replace(
-                $this->getBuffer()->getBufferKey($bufferKey),
-                $buffer,
-                $content
-            );
+        for ($i = 0; $i < $maxIterations; $i++) {
+            $buffers = $this->getBuffer()->getBuffers();
+
+            $findSuccess = false;
+            foreach ($buffers as $bufferId => $buffer) {
+                $bufferKey = $this->getBuffer()->getBufferKey($bufferId);
+                if (strpos($content, $bufferKey) !== false) {
+                    $buffer = $this->translateBuffer($buffer);
+                    $content = str_replace(
+                        $bufferKey,
+                        $buffer,
+                        $content
+                    );
+                    $this->getBuffer()->remove($bufferId);
+                    //Decrease max iterations if we found buffer id in content
+                    $maxIterations--;
+                    $findSuccess = true;
+                }
+            }
+            //Break if iteration without result
+            if (!$findSuccess) {
+                break;
+            }
         }
 
         $this->getBuffer()->clear();

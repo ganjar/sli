@@ -104,4 +104,15 @@ class SLI
     {
         return $this->getTranslate()->getEvent();
     }
+
+
+    /**
+     * Init global ob_start
+     */
+    public function iniSourceBuffering()
+    {
+        ob_start(function ($buffer) {
+            return $this->getBufferTranslate()->translateAllAndReplaceInSource($buffer);
+        });
+    }
 }

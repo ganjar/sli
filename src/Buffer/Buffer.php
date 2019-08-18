@@ -87,6 +87,16 @@ class Buffer
         return $this->buffers;
     }
 
+    /**
+     * @param $bufferId
+     */
+    public function remove($bufferId)
+    {
+        if (isset($this->buffers[$bufferId])) {
+            unset($this->buffers[$bufferId]);
+        }
+    }
+
     public function clear()
     {
         $this->buffers = [];
