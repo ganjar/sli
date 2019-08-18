@@ -197,6 +197,15 @@ class Translate
     }
 
     /**
+     * Delete original and all translated phrases
+     * @param $original
+     */
+    public function delete($original)
+    {
+        $this->getSource()->delete($original);
+    }
+
+    /**
      * @param $original
      * @return string
      */
