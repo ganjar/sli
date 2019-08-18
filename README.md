@@ -1,4 +1,5 @@
-# SLI - Library for quick creating multi language web application
+# Site Language Injection (SLI)
+**The easiest way to make your site multilingual**
 
 ## Installation
 
