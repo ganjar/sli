@@ -99,17 +99,17 @@ class MySqlSource extends PdoSourceAbstract
     }
 
     /**
-     * @param $phrases
+     * @param $originals
      * @return boolean
      */
-    public function insertPhrases($phrases)
+    public function insertOriginals($originals)
     {
-        if (!$phrases) {
+        if (!$originals) {
             return false;
         }
 
-        $countPhrases = count($phrases);
-        $queryParams = $this->createQueryParams($phrases);
+        $countPhrases = count($originals);
+        $queryParams = $this->createQueryParams($originals);
 
         $dataQuery = $this->getPdo()->prepare(
             'INSERT INTO `' . $this->getTableOriginal() . '` (`a`, `content`) VALUES
