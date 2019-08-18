@@ -186,6 +186,17 @@ class Translate
     }
 
     /**
+     * @param LanguageInterface $language
+     * @param string            $original
+     * @param string            $translate
+     */
+    public function saveTranslate(LanguageInterface $language, $original, $translate)
+    {
+        $original = $this->originalProcess($original);
+        $this->getSource()->saveTranslate($language, $original, $translate);
+    }
+
+    /**
      * @param $original
      * @return string
      */
