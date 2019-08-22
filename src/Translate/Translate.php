@@ -192,8 +192,11 @@ class Translate
      */
     public function saveTranslate(LanguageInterface $language, $original, $translate)
     {
-        $original = $this->originalProcess($original);
-        $this->getSource()->saveTranslate($language, $original, $translate);
+        $this->getSource()->saveTranslate(
+            $language,
+            $this->originalProcess($original),
+            $translate
+        );
     }
 
     /**
@@ -202,7 +205,9 @@ class Translate
      */
     public function delete($original)
     {
-        $this->getSource()->delete($original);
+        $this->getSource()->delete(
+            $this->originalProcess($original)
+        );
     }
 
     /**
