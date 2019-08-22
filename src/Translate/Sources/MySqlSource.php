@@ -10,6 +10,7 @@ namespace SLI\Translate\Sources;
 use PDO;
 use SLI\Exceptions\SliException;
 use SLI\Translate\Language\LanguageInterface;
+use SLI\Translate\Sources\Exceptions\MySqlSource\LanguageNotExistsException;
 
 /**
  * Class MySqlSource
@@ -40,23 +41,24 @@ class MySqlSource extends PdoSourceAbstract
     public function getTranslates(array $phrases, LanguageInterface $language)
     {
         $countPhrases = count($phrases);
+        $languageId = $this->getLanguageId($language);
         $dataQuery = $this->getPdo()->prepare(
-'SELECT o.`id`, o.`a`, o.`content` as `original`
-                ' . ($language->getId() ? ', t.`content` as `translate`' : ',NULL as `translate`') . '
+            'SELECT o.`id`, o.`a`, o.`content` as `original`
+                ' . ($languageId ? ', t.`content` as `translate`' : ',NULL as `translate`') . '
                 FROM `' . $this->getTableOriginal() . '` AS `o`
                 FORCE INDEX(indexA)
-                ' . ($language->getId() ? 'LEFT JOIN `' . $this->getTableTranslate() . '` AS `t` ON(`o`.`id`=`t`.`original_id` AND `t`.`language_id`=:language_id)' : '') . '
+                ' . ($languageId ? 'LEFT JOIN `' . $this->getTableTranslate() . '` AS `t` ON(`o`.`id`=`t`.`original_id` AND `t`.`language_id`=:language_id)' : '') . '
             WHERE ' . (implode('OR', array_fill(0, $countPhrases, '(o.`a`=? AND BINARY o.`content`=?)'))) . '
             LIMIT ' . $countPhrases
         );
-        if ($language->getId()) {
-            $dataQuery->bindValue('language_id', $language->getId(), \PDO::PARAM_INT);
+        if ($languageId) {
+            $dataQuery->bindValue('language_id', $languageId, \PDO::PARAM_INT);
         }
 
         $paramKey = 0;
-        $queryParams = $this->createQueryParams($phrases);
-        foreach ($queryParams as $params) {
-            foreach ($params as $param) {
+        foreach ($phrases as $phrase) {
+            $queryParams = $this->createOriginalQueryParams($phrase);
+            foreach ($queryParams as $param) {
                 $paramKey++;
                 $dataQuery->bindValue($paramKey, $param, \PDO::PARAM_STR);
             }
@@ -80,53 +82,18 @@ class MySqlSource extends PdoSourceAbstract
     }
 
     /**
-     * Generate keys for find in database
-     * @param array $phrases
+     * Generate keys for find original phrase in database
+     * @param string $phrase
      * @return array
      */
-    protected function createQueryParams($phrases = [])
+    protected function createOriginalQueryParams($phrase)
     {
-        $keys = [];
-        foreach ($phrases as $phrase) {
-            $a = mb_substr($phrase, 0, 64, 'utf8');
-            $keys[] = [
-                'a'       => $a,
-                'content' => $phrase,
-            ];
-        }
+        $a = mb_substr($phrase, 0, 64, 'utf8');
 
-        return $keys;
-    }
-
-    /**
-     * @param $originals
-     * @return boolean
-     */
-    public function insertOriginals($originals)
-    {
-        if (!$originals) {
-            return false;
-        }
-
-        $countPhrases = count($originals);
-        $queryParams = $this->createQueryParams($originals);
-
-        $dataQuery = $this->getPdo()->prepare(
-            'INSERT INTO `' . $this->getTableOriginal() . '` (`a`, `content`) VALUES
-            ' . (implode(', ', array_fill(0, $countPhrases, '(?, ?)')))
-        );
-
-        $paramKey = 0;
-        foreach ($queryParams as $params) {
-            foreach ($params as $param) {
-                $paramKey++;
-                $dataQuery->bindValue($paramKey, $param, PDO::PARAM_STR);
-            }
-        }
-
-        $dataQuery->execute();
-
-        return true;
+        return [
+            'a'       => $a,
+            'content' => $phrase,
+        ];
     }
 
     /**
@@ -207,9 +174,99 @@ class MySqlSource extends PdoSourceAbstract
      * @param LanguageInterface $language
      * @param string            $original
      * @param string            $translate
+     * @throws LanguageNotExistsException
      */
     public function saveTranslate(LanguageInterface $language, $original, $translate)
     {
-        // TODO: Implement saveTranslate() method.
+        $originalId = $this->getOriginalId($original);
+        if (!$originalId) {
+            $originalId = $this->insertOriginal($original);
+        }
+
+        $languageId = $this->getLanguageId($language);
+        if (!$languageId) {
+            throw new LanguageNotExistsException('Language does not exists');
+        }
+
+        $updatePdo = $this->getPdo()->prepare("
+                INSERT INTO `sli_translate` (`original_id`, `language_id`, `content`)
+                VALUES (:id, :langId, :content)
+                ON DUPLICATE KEY UPDATE `content`=:content
+            ");
+        $updatePdo->bindParam(':content', $translate, PDO::PARAM_STR);
+        $updatePdo->bindParam(':id', $originalId, PDO::PARAM_INT);
+        $updatePdo->bindParam(':langId', $languageId, PDO::PARAM_INT);
+        $updatePdo->execute();
+    }
+
+    /**
+     * @param LanguageInterface $language
+     * @return int
+     */
+    public function getLanguageId(LanguageInterface $language)
+    {
+        $statement = $this->getPdo()->prepare("
+                SELECT id FROM sli_language WHERE alias=:alias
+            ");
+        $statement->bindValue('alias', $language->getAlias());
+        $statement->execute();
+        $language = $statement->fetch(PDO::FETCH_COLUMN);
+
+        return $language;
+    }
+
+    /**
+     * @param string $original
+     * @return mixed
+     */
+    public function getOriginalId($original)
+    {
+        $statement = $this->getPdo()->prepare("
+                SELECT id FROM sli_original WHERE a=:a AND content=:content
+            ");
+        $queryParams = $this->createOriginalQueryParams($original);
+        foreach ($queryParams as $queryKey => $queryParam) {
+            $statement->bindValue($queryKey, $queryParam);
+        }
+        $statement->execute();
+        $originalId = $statement->fetch(PDO::FETCH_COLUMN);
+
+        return $originalId;
+    }
+
+    /**
+     * @param string $original
+     * @return string
+     */
+    public function insertOriginal($original)
+    {
+        $statement = $this->getPdo()->prepare(
+            'INSERT INTO `' . $this->getTableOriginal() . '` (`a`, `content`) VALUES (:a, :content)'
+        );
+
+        $queryParams = $this->createOriginalQueryParams($original);
+        foreach ($queryParams as $queryKey => $queryParam) {
+            $statement->bindValue($queryKey, $queryParam);
+        }
+
+        $statement->execute();
+
+        return $this->getPdo()->lastInsertId();
+    }
+
+    /**
+     * Delete original and all translated phrases
+     * @param string $original
+     */
+    public function delete($original)
+    {
+        $statement = $this->getPdo()->prepare("
+                DELETE FROM `sli_original` WHERE a=:a AND content=:content
+            ");
+        $queryParams = $this->createOriginalQueryParams($original);
+        foreach ($queryParams as $queryKey => $queryParam) {
+            $statement->bindValue($queryKey, $queryParam);
+        }
+        $statement->execute();
     }
 }

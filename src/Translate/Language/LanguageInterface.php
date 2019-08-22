@@ -11,12 +11,6 @@ namespace SLI\Translate\Language;
 interface LanguageInterface
 {
     /**
-     * Language ID
-     * @return int
-     */
-    function getId();
-
-    /**
      * Language title (Русский, English)
      * @return string
      */

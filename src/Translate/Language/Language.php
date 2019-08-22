@@ -12,28 +12,21 @@ namespace SLI\Translate\Language;
  */
 class Language implements LanguageInterface
 {
-    protected $id;
     protected $alias;
     protected $title;
     protected $isOriginal = false;
 
     /**
-     * @return mixed
+     * Language constructor.
+     * @param string $alias
+     * @param string $title
+     * @param bool   $isOriginal
      */
-    public function getId()
+    public function __construct($alias, $title = '', $isOriginal = false)
     {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
+        $this->alias = $alias;
+        $this->title = $title;
+        $this->isOriginal = $isOriginal;
     }
 
     /**
@@ -45,17 +38,6 @@ class Language implements LanguageInterface
     }
 
     /**
-     * @param $alias
-     * @return $this
-     */
-    public function setAlias($alias)
-    {
-        $this->alias = $alias;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getTitle()
@@ -64,32 +46,10 @@ class Language implements LanguageInterface
     }
 
     /**
-     * @param $title
-     * @return $this
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function getIsOriginal()
     {
         return $this->isOriginal;
-    }
-
-    /**
-     * @param mixed $isOriginal
-     * @return $this
-     */
-    public function setIsOriginal($isOriginal)
-    {
-        $this->isOriginal = $isOriginal;
-
-        return $this;
     }
 }

@@ -46,7 +46,7 @@ class CsvFileSource extends SourceAbstract
      */
     public function __construct($directoryPath, $delimiter, $filesExtension)
     {
-        $this->directoryPath = $directoryPath;
+        $this->directoryPath = rtrim($directoryPath, '/\\');
         $this->delimiter = $delimiter;
         $this->filesExtension = $filesExtension;
     }
@@ -70,7 +70,7 @@ class CsvFileSource extends SourceAbstract
             throw new UnsupportedLanguageAliasException('Unsupported language alias');
         }
 
-        return rtrim($this->getDirectoryPath(), '/\\') . DIRECTORY_SEPARATOR . $languageAlias . '.' . $this->filesExtension;
+        return $this->getDirectoryPath() . DIRECTORY_SEPARATOR . $languageAlias . '.' . $this->filesExtension;
     }
 
     /**
@@ -162,5 +162,27 @@ class CsvFileSource extends SourceAbstract
         $translates = $this->parseLanguageFile($language->getAlias());
         $translates[$original] = $translate;
         $this->saveLanguageFile($language->getAlias(), $translates);
+    }
+
+    /**
+     * Delete original and all translated phrases
+     * @param string $original
+     * @throws DirectoryNotFoundException
+     * @throws FileNotWritableException
+     * @throws FileReadPermissionsException
+     * @throws UnsupportedLanguageAliasException
+     */
+    public function delete($original)
+    {
+        $dataFiles = glob($this->getDirectoryPath() . DIRECTORY_SEPARATOR .  '*.' . $this->filesExtension);
+        foreach ($dataFiles as $file) {
+            $fileInfo = pathinfo($file);
+            $languageAlias = $fileInfo['filename'];
+            $translates = $this->parseLanguageFile($languageAlias);
+            if (key_exists($original, $translates)) {
+                unset($translates[$original]);
+                $this->saveLanguageFile($languageAlias, $translates);
+            }
+        }
     }
 }
