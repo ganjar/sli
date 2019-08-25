@@ -183,20 +183,7 @@ class MySqlSource extends PdoSourceAbstract
             $originalId = $this->insertOriginal($original);
         }
 
-        $languageId = $this->getLanguageId($language);
-        if (!$languageId) {
-            throw new LanguageNotExistsException('Language does not exists');
-        }
-
-        $updatePdo = $this->getPdo()->prepare("
-                INSERT INTO `sli_translate` (`original_id`, `language_id`, `content`)
-                VALUES (:id, :langId, :content)
-                ON DUPLICATE KEY UPDATE `content`=:content
-            ");
-        $updatePdo->bindParam(':content', $translate, PDO::PARAM_STR);
-        $updatePdo->bindParam(':id', $originalId, PDO::PARAM_INT);
-        $updatePdo->bindParam(':langId', $languageId, PDO::PARAM_INT);
-        $updatePdo->execute();
+        $this->saveTranslateByOriginalId($language, $originalId, $translate);
     }
 
     /**
@@ -268,5 +255,29 @@ class MySqlSource extends PdoSourceAbstract
             $statement->bindValue($queryKey, $queryParam);
         }
         $statement->execute();
+    }
+
+    /**
+     * @param LanguageInterface $language
+     * @param int               $originalId
+     * @param string            $translate
+     * @throws LanguageNotExistsException
+     */
+    public function saveTranslateByOriginalId(LanguageInterface $language, $originalId, $translate)
+    {
+        $languageId = $this->getLanguageId($language);
+        if ($languageId === false) {
+            throw new LanguageNotExistsException('Language does not exists');
+        }
+
+        $updatePdo = $this->getPdo()->prepare("
+                INSERT INTO `sli_translate` (`original_id`, `language_id`, `content`)
+                VALUES (:id, :langId, :content)
+                ON DUPLICATE KEY UPDATE `content`=:content
+            ");
+        $updatePdo->bindParam(':content', $translate, PDO::PARAM_STR);
+        $updatePdo->bindParam(':id', $originalId, PDO::PARAM_INT);
+        $updatePdo->bindParam(':langId', $languageId, PDO::PARAM_INT);
+        $updatePdo->execute();
     }
 }
