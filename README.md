@@ -16,7 +16,7 @@ Apache, PHP 5.2 и выше, mod_rewrite, MySQL, Memcache (для быстрой
     Если весь сайт работает через один контроллер - можно подключить модуль через include "[full_path]/protected/sli.php";<br>
 3.  Выставить права 0777 на папку protected/data и на все внутренние директории<br>
 4.  Открыть файл protected/config/config.php и прописать данные конекта к БД MySQL <br>
-5.  Зайти в админку по адресу htt://адресСайта/sli/index.php<br>
+5.  Зайти в админку по адресу http://адресСайта/sli/index.php<br>
 6.  Ввести свой Email и пароль.<br>
 7.  Войти под указанными данными<br>
 <br>
