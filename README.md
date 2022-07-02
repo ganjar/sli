@@ -1,6 +1,8 @@
-sli
+SLI устарел и больше не поддерживается.
+Домен sli.su не продлевается и больше не имеет отношения к SLI.
 ===
-
+SLI is deprecated and no longer supported. The sli.su domain is not renewed and is no longer associated with SLI.
+===
 SLI - Site Language Injection  <br>
 Make a website multilingualfor 5 minutes  <br>
 Мультиязычный сайт на php за 5 минут  <br>
@@ -20,5 +22,3 @@ Apache, PHP 5.2 и выше, mod_rewrite, MySQL, Memcache (для быстрой
 6.  Ввести свой Email и пароль.<br>
 7.  Войти под указанными данными<br>
 <br>
-Больше информации в разделе документация:
-http://sli.su/documentation/<br>
